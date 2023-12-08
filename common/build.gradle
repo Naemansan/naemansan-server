@@ -1,0 +1,10 @@
+dependencies {
+    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.2.1'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+}
+
+tasks.register("prepareKotlinBuildScriptModel") {}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}

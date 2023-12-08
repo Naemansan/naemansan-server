@@ -1,0 +1,6 @@
+rootProject.name = 'naemansan'
+
+include 'common'
+include 'user-api'
+include 'tag-api'
+include 'course-api'

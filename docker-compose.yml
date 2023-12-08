@@ -1,0 +1,118 @@
+version: '3'
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    environment:
+      ZOOKEEPER_SERVER_ID: 1
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+      ZOOKEEPER_INIT_LIMIT: 5
+      ZOOKEEPER_SYNC_LIMIT: 2
+    ports:
+      - "2181:2181"
+    networks:
+      - naemansan_network
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      ALLOW_PLAINTEXT_LISTENER: yes
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:29092, EXTERNAL://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_DEFAULT_REPLICATION_FACTOR: 1
+    networks:
+      - naemansan_network
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui
+    container_name: kafka-ui
+    networks:
+      - naemansan_network
+    ports:
+      - "8989:8080"
+    depends_on:
+      - kafka
+      - zookeeper
+    environment:
+      - KAFKA_CLUSTERS_0_NAME=local
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:29092
+      - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper:2181
+
+  mysql-naemansan:
+    image: mysql:8.0.22
+    networks:
+      - naemansan_network
+    volumes:
+      - mysql-naemansan:/var/lib/mysql
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - "3306:3306"
+    platform: linux/amd64
+    environment:
+      - TZ=Asia/Seoul
+      - MYSQL_ROOT_PASSWORD=1234
+      - MYSQL_DATABASE=naemansan
+
+  user-api:
+    image: naemansan-user-api:0.0.1-SNAPSHOT
+    networks:
+      - naemansan_network
+    ports:
+      - "8081:8080"
+    depends_on:
+      - mysql-naemansan
+      - tag-api
+
+  tag-api:
+    image: naemansan-tag-api:0.0.1-SNAPSHOT
+    networks:
+      - naemansan_network
+    ports:
+      - "8082:8080"
+    depends_on:
+      - mysql-naemansan
+
+#  axon-server:
+#    container_name: axon-server
+#    image: axoniq/axonserver:4.6.3-jdk-11-dev
+#    networks:
+#      - naemansan_network
+#    ports:
+#      - "8024:8024"
+#      - "8124:8124"
+#    volumes:
+#      - axonserver-data:/axonserver/data
+#      - axonserver-events:/axonserver/events
+#      - axonserver-config:/axonserver/config:ro
+
+volumes:
+  mysql-naemansan:
+#  axonserver-data:
+#    driver: local
+#    driver_opts:
+#      o: bind
+#      type: none
+#      device: ${PWD}/axon-server-se/data
+#  axonserver-events:
+#    driver: local
+#    driver_opts:
+#      o: bind
+#      type: none
+#      device: ${PWD}/axon-server-se/events
+#  axonserver-config:
+#    driver: local
+#    driver_opts:
+#      o: bind
+#      type: none
+#      device: ${PWD}/axon-server-se/config
+
+networks:
+  naemansan_network:
+    driver: bridge
