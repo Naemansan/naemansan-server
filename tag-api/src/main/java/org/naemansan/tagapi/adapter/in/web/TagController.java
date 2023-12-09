@@ -2,7 +2,7 @@ package org.naemansan.tagapi.adapter.in.web;
 
 import lombok.RequiredArgsConstructor;
 import org.naemansan.common.annotaion.WebAdapter;
-import org.naemansan.common.dto.ResponseDto;
+import org.naemansan.common.dto.response.ResponseDto;
 import org.naemansan.tagapi.application.port.in.usecase.TagQueryUseCase;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

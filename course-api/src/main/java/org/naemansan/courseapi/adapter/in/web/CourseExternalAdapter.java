@@ -3,7 +3,7 @@ package org.naemansan.courseapi.adapter.in.web;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.naemansan.common.annotaion.WebAdapter;
-import org.naemansan.common.dto.ResponseDto;
+import org.naemansan.common.dto.response.ResponseDto;
 import org.naemansan.courseapi.application.port.in.command.CreateCourseCommand;
 import org.naemansan.courseapi.application.port.in.command.DeleteCourseCommand;
 import org.naemansan.courseapi.application.port.in.command.UpdateCourseCommand;

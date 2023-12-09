@@ -3,7 +3,7 @@ package org.naemansan.courseapi.dto.type;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.naemansan.common.exception.ErrorCode;
+import org.naemansan.common.dto.type.ErrorCode;
 import org.naemansan.common.exception.CommonException;
 
 import java.util.Arrays;
@@ -15,8 +15,10 @@ public enum EEmotion {
     COMFORT("COMFORT"),
     THANKS("THANKS"),
     ANXIETY("ANXIETY"),
-    WOUND("WOUND"),
+    FLUTTER("FLUTTER"),
     SADNESS("SADNESS");
+
+
 
     private final String value;
 

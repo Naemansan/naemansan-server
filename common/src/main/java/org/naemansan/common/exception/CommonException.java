@@ -2,6 +2,7 @@ package org.naemansan.common.exception;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.naemansan.common.dto.type.ErrorCode;
 
 @Getter
 @RequiredArgsConstructor
