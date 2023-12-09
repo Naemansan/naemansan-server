@@ -15,4 +15,6 @@ public interface SpotRepositoryPort {
     void delete(Spot spot);
 
     void deleteAll(List<Spot> spots);
+
+    List<Spot> findByCourse(Course course);
 }

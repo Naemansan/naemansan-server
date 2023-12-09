@@ -41,6 +41,12 @@ public class CoursePersistentAdapter implements CourseRepositoryPort {
     }
 
     @Override
+    public void deleteCourseTags(List<CourseTag> courseTags) {
+        courseTagRepository.deleteAll(courseTags);
+        courseTagRepository.flush();
+    }
+
+    @Override
     public Course findCourseById(Long id) {
         return courseRepository.findById(id).orElseThrow(
                 () -> new CommonException(ErrorCode.NOT_FOUND_RESOURCE)

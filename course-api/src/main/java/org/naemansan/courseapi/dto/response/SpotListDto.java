@@ -22,8 +22,8 @@ public record SpotListDto(
         @NotNull
         String category,
 
-        @JsonProperty("useImage")
+        @JsonProperty("thumbnailUrl")
         @NotNull
-        String imageUrl
+        String thumbnailUrl
 ) {
 }

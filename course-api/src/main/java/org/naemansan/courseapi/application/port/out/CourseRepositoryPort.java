@@ -9,11 +9,16 @@ import java.util.UUID;
 
 public interface CourseRepositoryPort {
     Course craeteCourse(
-            String title, String content,
-            String startLocationName, MultiPoint locations, Double distance,
+            String title,
+            String content,
+            String startLocationName,
+            MultiPoint locations,
+            Double distance,
             UUID createdUserId);
 
     List<CourseTag> createCourseTags(List<Long> tagIds, Course course);
+
+    void deleteCourseTags(List<CourseTag> courseTags);
 
     Course findCourseById(Long id);
 

@@ -79,7 +79,7 @@ public class Course {
         this.isDeleted = false;
     }
 
-    public void update(String title, String content, UUID updatedUserId) {
+    public void update(String title, String content) {
         this.title = title;
         this.content = content;
     }

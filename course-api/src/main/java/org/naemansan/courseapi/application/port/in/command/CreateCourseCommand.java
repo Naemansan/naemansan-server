@@ -14,6 +14,7 @@ import java.util.List;
 public class CreateCourseCommand extends SelfValidating<CreateCourseCommand> {
     @Size(min = 36, max = 36)
     String userId;
+
     @Size(min = 1, max = 12)
     String title;
 

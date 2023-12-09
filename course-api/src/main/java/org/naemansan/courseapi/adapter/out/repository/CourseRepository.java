@@ -15,5 +15,6 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
     @EntityGraph(attributePaths = {"tags"})
     Optional<Course> findById(Long id);
 
+    @EntityGraph(attributePaths = {"tags"})
     Optional<Course> findByIdAndUserId(Long id, UUID userId);
 }

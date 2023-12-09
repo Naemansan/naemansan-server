@@ -42,5 +42,11 @@ public class SpotPersistentAdapter implements SpotRepositoryPort {
     @Override
     public void deleteAll(List<Spot> spots) {
         spotRepository.deleteAll(spots);
+        spotRepository.flush();
+    }
+
+    @Override
+    public List<Spot> findByCourse(Course course) {
+        return spotRepository.findByCourse(course);
     }
 }

@@ -6,10 +6,12 @@ import org.naemansan.common.annotaion.WebAdapter;
 import org.naemansan.common.dto.ResponseDto;
 import org.naemansan.courseapi.application.port.in.command.CreateCourseCommand;
 import org.naemansan.courseapi.application.port.in.command.DeleteCourseCommand;
+import org.naemansan.courseapi.application.port.in.command.UpdateCourseCommand;
 import org.naemansan.courseapi.application.port.in.command.UpdateCourseStatusCommand;
 import org.naemansan.courseapi.application.port.in.query.ReadCourseCommand;
 import org.naemansan.courseapi.application.port.in.usecase.CourseUseCase;
 import org.naemansan.courseapi.dto.request.CourseDto;
+import org.naemansan.courseapi.dto.request.CourseUpdateDto;
 import org.naemansan.courseapi.dto.request.CourseUpdateStatusDto;
 import org.springframework.web.bind.annotation.*;
 
@@ -56,10 +58,20 @@ public class CourseExternalAdapter {
     }
 
     @PutMapping("/{courseId}")
-    public String updateCourse(
-            @PathVariable("courseId") Long courseId
+    public ResponseDto<?> updateCourse(
+            @PathVariable("courseId") Long courseId,
+            @RequestBody @Valid CourseUpdateDto requestDto
     ) {
-        return "readCourseInfo";
+        String uuid = "625ad265-cc31-44fd-b783-e8cd047b6903";
+        courseUseCase.updateCourse(UpdateCourseCommand.of(
+                uuid,
+                courseId,
+                requestDto.title(),
+                requestDto.content(),
+                requestDto.tagIds(),
+                requestDto.spots()));
+
+        return ResponseDto.ok(null);
     }
 
     @PatchMapping("/{courseId}")
@@ -68,7 +80,10 @@ public class CourseExternalAdapter {
             @RequestBody @Valid CourseUpdateStatusDto requestDto
     ) {
         String uuid = "625ad265-cc31-44fd-b783-e8cd047b6903";
-        courseUseCase.updateCourseStatus(UpdateCourseStatusCommand.of(uuid, courseId, requestDto.isEnrolled()));
+        courseUseCase.updateCourseStatus(UpdateCourseStatusCommand.of(
+                uuid,
+                courseId,
+                requestDto.isEnrolled()));
 
         return ResponseDto.ok(null);
     }
