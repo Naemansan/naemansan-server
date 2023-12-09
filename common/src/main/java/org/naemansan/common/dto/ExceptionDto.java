@@ -2,6 +2,7 @@ package org.naemansan.common.dto;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
+import org.naemansan.common.exception.ErrorCode;
 
 @Getter
 public class ExceptionDto {

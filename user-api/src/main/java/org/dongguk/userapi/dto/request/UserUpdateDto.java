@@ -17,6 +17,6 @@ public record UserUpdateDto(
 
         @JsonProperty("tags")
         @NotNull
-        List<Integer> tags
+        List<Long> tags
 ) {
 }

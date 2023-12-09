@@ -1,9 +1,7 @@
 package org.naemansan.courseapi.application.port.out;
 
-import org.naemansan.courseapi.domain.Course;
-
 import java.util.List;
 
-public interface CourseTagServicePort {
+public interface TagServicePort {
     List<String> findByTagIds(List<Long> tagIds);
 }

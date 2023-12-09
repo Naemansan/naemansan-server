@@ -4,7 +4,6 @@ import org.dongguk.userapi.dto.response.TagDto;
 
 import java.util.List;
 
-public interface FindTagNamesPort {
-
-    List<TagDto> findAll(List<Long> ids);
+public interface TagServicePort {
+    List<TagDto> findByTagDtoIds(List<Long> tagIds);
 }

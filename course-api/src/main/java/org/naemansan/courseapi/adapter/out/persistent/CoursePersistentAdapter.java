@@ -3,7 +3,7 @@ package org.naemansan.courseapi.adapter.out.persistent;
 import lombok.RequiredArgsConstructor;
 import org.locationtech.jts.geom.MultiPoint;
 import org.naemansan.common.annotaion.PersistenceAdapter;
-import org.naemansan.common.dto.ErrorCode;
+import org.naemansan.common.exception.ErrorCode;
 import org.naemansan.common.exception.CommonException;
 import org.naemansan.courseapi.adapter.out.repository.CourseRepository;
 import org.naemansan.courseapi.adapter.out.repository.CourseTagRepository;

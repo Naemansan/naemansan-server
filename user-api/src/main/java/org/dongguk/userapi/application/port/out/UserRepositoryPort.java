@@ -5,7 +5,7 @@ import org.dongguk.userapi.domain.User;
 
 import java.util.List;
 
-public interface FindUserPort {
+public interface UserRepositoryPort {
     User findUserByUuid(String uuid);
 
     User findUserDetailByUuid(String uuid);

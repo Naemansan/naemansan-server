@@ -5,9 +5,7 @@ import org.dongguk.userapi.adapter.out.repository.UserRepository;
 import org.dongguk.userapi.application.port.in.command.UpdateUserCommand;
 import org.dongguk.userapi.application.port.in.query.FindUserQuery;
 import org.dongguk.userapi.application.port.in.usecase.UserRequestUseCase;
-import org.dongguk.userapi.application.port.out.FindFollowPort;
-import org.dongguk.userapi.application.port.out.FindTagNamesPort;
-import org.dongguk.userapi.application.port.out.FindUserPort;
+import org.dongguk.userapi.application.port.out.*;
 import org.dongguk.userapi.domain.Follow;
 import org.dongguk.userapi.domain.User;
 import org.dongguk.userapi.domain.UserTag;
@@ -16,6 +14,7 @@ import org.dongguk.userapi.dto.response.UserDetailDto;
 import org.dongguk.userapi.dto.response.FollowListDto;
 import org.dongguk.userapi.dto.response.UserNameDto;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,23 +22,27 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class UserService implements UserRequestUseCase {
-    private final FindUserPort findUserPort;
-    private final FindTagNamesPort findTagNamesPort;
-    private final FindFollowPort findFollowPort;
+    private final TagServicePort tagServicePort;
+    private final ImageServicePort imageServicePort;
+
+    private final UserRepositoryPort userRepositoryPort;
+    private final FollowRepositoryPort followRepositoryPort;
+    private final UserTagRepositoryPort userTagRepositoryPort;
 
     @Override
     public UserDetailDto findUserDetailByUuid(FindUserQuery command) {
-        User user = findUserPort.findUserDetailByUuid(command.getUuid());
+        User user = userRepositoryPort.findUserDetailByUuid(command.getUuid());
 
         List<TagDto> tags = new ArrayList<>();
         if (user.getTags() != null && !user.getTags().isEmpty()) {
-            tags.addAll(findTagNamesPort.findAll(
+            tags.addAll(tagServicePort.findByTagDtoIds(
                     user.getTags().stream()
-                            .map(UserTag::getTagId).toList()));
+                            .map(UserTag::getTagId)
+                            .toList()));
         }
 
-        List<Follow> followings = findFollowPort.findFollowingByUuid(user);
-        List<Follow> followers = findFollowPort.findFollowedByUuid(user);
+        List<Follow> followings = followRepositoryPort.findFollowingByUuid(user);
+        List<Follow> followers = followRepositoryPort.findFollowedByUuid(user);
 
         return UserDetailDto.builder()
                 .uuid(user.getUuid().toString())
@@ -67,13 +70,25 @@ public class UserService implements UserRequestUseCase {
     }
 
     @Override
+    @Transactional
     public void updateUserByUuid(UpdateUserCommand command) {
+        // User 조회
+        User user = userRepositoryPort.findUserDetailByUuid(command.getUuid());
 
+        // 이미지 저장(구현 미완)
+        String profileImageUrl = imageServicePort.uploadImage(command.getProfileImage());
+
+        // Tag 삭제
+        userTagRepositoryPort.deleteUserTags(user.getTags());
+
+        // User Update And Save Tags
+        userTagRepositoryPort.saveUserTags(command.getTagIds(), user);
+        user.update(command.getNickname(), command.getIntroduction(), profileImageUrl);
     }
 
     @Override
     public UserNameDto findUserNameByUuid(String uuid) {
-        UserRepository.UserName userName = findUserPort.findUserNameByUuid(uuid);
+        UserRepository.UserName userName = userRepositoryPort.findUserNameByUuid(uuid);
 
         return UserNameDto.builder()
                 .uuid(userName.getUuid().toString())
@@ -84,7 +99,7 @@ public class UserService implements UserRequestUseCase {
 
     @Override
     public List<UserNameDto> findUserNamesByUuids(List<String> uuids) {
-        List<UserRepository.UserName> userNames = findUserPort.findUserNamesByUuids(uuids);
+        List<UserRepository.UserName> userNames = userRepositoryPort.findUserNamesByUuids(uuids);
 
         return userNames.stream()
                 .map(userName -> UserNameDto.builder()

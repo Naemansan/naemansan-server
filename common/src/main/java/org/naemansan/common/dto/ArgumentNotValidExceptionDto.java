@@ -3,6 +3,7 @@ package org.naemansan.common.dto;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import lombok.Getter;
+import org.naemansan.common.exception.ErrorCode;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 

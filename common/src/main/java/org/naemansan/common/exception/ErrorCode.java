@@ -1,4 +1,4 @@
-package org.naemansan.common.dto;
+package org.naemansan.common.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,9 +18,10 @@ public enum ErrorCode {
     // Invalid Argument Error
     MISSING_REQUEST_PARAMETER(40000, HttpStatus.BAD_REQUEST, "필수 요청 파라미터가 누락되었습니다."),
     MISSING_REQUEST_HEADER(40000, HttpStatus.BAD_REQUEST, "필수 요청 헤더가 누락되었습니다."),
-    INVALID_ARGUMENT(40001, HttpStatus.BAD_REQUEST, "요청에 유효하지 않은 인자입니다."),
     INVALID_PARAMETER_FORMAT(40001, HttpStatus.BAD_REQUEST, "요청에 유효하지 않은 인자 형식입니다."),
-    INVALID_HEADER_ERROR(40001, HttpStatus.BAD_REQUEST, "유효하지 않은 헤더입니다."),
+    INVALID_ARGUMENT(40001, HttpStatus.BAD_REQUEST, "요청에 유효하지 않은 인자입니다."),
+    INVALID_HEADER(40001, HttpStatus.BAD_REQUEST, "유효하지 않은 헤더입니다."),
+    INVALID_CONTEXT_TYPE(40001, HttpStatus.BAD_REQUEST, "유효하지 않은 컨텐츠 타입입니다."),
     BAD_REQUEST_PARAMETER(40002, HttpStatus.BAD_REQUEST, "잘못된 파라미터 형식입니다."),
     BAD_REQUEST_JSON(40002, HttpStatus.BAD_REQUEST, "잘못된 JSON 형식입니다."),
     DUPLICATED_RESOURCE(40003, HttpStatus.BAD_REQUEST, "중복된 리소스입니다."),
@@ -43,7 +44,7 @@ public enum ErrorCode {
 
     // Bad Gateway
     BAD_GATEWAY(50200, HttpStatus.BAD_GATEWAY, "외부 서버 에러입니다."),
-    UPLOAD_FILE_ERROR(50201, HttpStatus.INTERNAL_SERVER_ERROR, "파일 업로드에 실패하였습니다.");
+    AWS_S3_ERROR(50201, HttpStatus.BAD_GATEWAY, "AWS S3 에러입니다.");
 
     private final Integer code;
     private final HttpStatus httpStatus;

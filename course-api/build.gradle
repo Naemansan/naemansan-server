@@ -12,6 +12,9 @@ dependencies {
     // GeoMath
     implementation 'org.hibernate:hibernate-spatial:6.2.2.Final'
 
+    // Object Storage
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
     // Database
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'

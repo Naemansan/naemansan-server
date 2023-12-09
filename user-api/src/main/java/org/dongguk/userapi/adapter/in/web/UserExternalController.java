@@ -1,16 +1,20 @@
 package org.dongguk.userapi.adapter.in.web;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.dongguk.userapi.adapter.out.repository.UserRepository;
+import org.dongguk.userapi.application.port.in.command.UpdateUserCommand;
 import org.dongguk.userapi.application.port.in.query.FindUserQuery;
 import org.dongguk.userapi.application.port.in.usecase.UserRequestUseCase;
 import org.dongguk.userapi.domain.User;
+import org.dongguk.userapi.dto.request.UserUpdateDto;
 import org.dongguk.userapi.dto.response.UserDetailDto;
 import org.dongguk.userapi.dto.type.EProvider;
 import org.dongguk.userapi.dto.type.ERole;
 import org.naemansan.common.annotaion.WebAdapter;
 import org.naemansan.common.dto.ResponseDto;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -23,7 +27,7 @@ public class UserExternalController {
     private final UserRepository userRepository;
 
     @PostMapping("")
-    public UserDetailDto createUserInfo() {
+    public UserDetailDto createUser() {
         User user = userRepository.save(User.builder()
                 .serialId("test")
                 .password("test")
@@ -42,15 +46,31 @@ public class UserExternalController {
     }
 
     @GetMapping("")
-    public ResponseDto<?> readUserInfo() {
-        String uuid = "524c1de9-00e2-4ff7-bea4-8b4323413fbf";
+    public ResponseDto<?> readUser() {
+        String uuid = "625ad265-cc31-44fd-b783-e8cd047b6903";
         return ResponseDto.ok(userRequestUseCase.findUserDetailByUuid(FindUserQuery.of(uuid)));
     }
 
     @GetMapping("/{userUuid}")
-    public ResponseDto<?> hello(
+    public ResponseDto<?> readAntherUser(
             @PathVariable("userUuid") String userUuid
     ) {
         return ResponseDto.ok(userRequestUseCase.findUserDetailByUuid(FindUserQuery.of(userUuid)));
+    }
+
+    @PutMapping("")
+    public ResponseDto<?> updateUser(
+            @RequestPart(value = "body", required = false) @Valid UserUpdateDto requestDto,
+            @RequestPart(value = "image", required = false) MultipartFile imgFile
+    ) {
+        userRequestUseCase.updateUserByUuid(UpdateUserCommand.of(
+                "625ad265-cc31-44fd-b783-e8cd047b6903",
+                requestDto.nickname(),
+                requestDto.introduction(),
+                requestDto.tags(),
+                imgFile
+        ));
+
+        return ResponseDto.ok("updateUserInfo");
     }
 }

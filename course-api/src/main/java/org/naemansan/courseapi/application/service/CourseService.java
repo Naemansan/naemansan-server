@@ -30,7 +30,7 @@ public class CourseService implements CourseUseCase {
 
     private final UserServicePort userServicePort;
     private final NaverMapServicePort naverMapServicePort;
-    private final CourseTagServicePort courseTagServicePort;
+    private final TagServicePort tagServicePort;
 
     private final CourseRepositoryPort courseRepositoryPort;
     private final SpotRepositoryPort spotRepositoryPort;
@@ -72,7 +72,7 @@ public class CourseService implements CourseUseCase {
                 .content(course.getContent())
                 .startLocationName(course.getStartLocationName())
                 .locations(courseUtil.multiPoint2Locations(course.getLocations()))
-                .tags(courseTagServicePort.findByTagIds(command.getTagIds()))
+                .tags(tagServicePort.findByTagIds(command.getTagIds()))
                 .distance(String.valueOf(Math.round(course.getDistance())))
                 .createdAt(course.getCreatedAt())
                 .userId(userNameDto.uuid())
@@ -94,7 +94,7 @@ public class CourseService implements CourseUseCase {
         Course course = courseRepositoryPort.findCourseById(command.getId());
 
         // tagName 조회
-        List<String> tagNames = courseTagServicePort.findByTagIds(
+        List<String> tagNames = tagServicePort.findByTagIds(
                 course.getTags().stream().map(CourseTag::getTagId).toList());
 
         // userName 조회
