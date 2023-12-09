@@ -10,6 +10,7 @@ import org.naemansan.common.dto.ErrorCode;
 import org.naemansan.common.exception.CommonException;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @PersistenceAdapter
@@ -27,5 +28,17 @@ public class FindUserPersistenceAdapter implements FindUserPort {
     public User findUserDetailByUuid(String uuid) {
         return userRepository.findUserDetailByUuid(UUID.fromString(uuid))
                 .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_RESOURCE));
+    }
+
+    @Override
+    public UserRepository.UserName findUserNameByUuid(String uuid) {
+        return userRepository.findUserNameByUuid(UUID.fromString(uuid))
+                .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_RESOURCE));
+    }
+
+    @Override
+    public List<UserRepository.UserName> findUserNamesByUuids(List<String> uuids) {
+        return userRepository.findUserNamesByUuids(uuids.stream()
+                .map(UUID::fromString).toList());
     }
 }

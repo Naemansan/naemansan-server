@@ -44,8 +44,6 @@ public class FindTagPersistenceAdapter implements FindTagNamesPort {
                     .orElse("");
         }
 
-        System.out.println(url);
-
         List<TagDto> tagDtos = new ArrayList<>();
 
         try {

@@ -1,6 +1,7 @@
 package org.dongguk.userapi.application.service;
 
 import lombok.RequiredArgsConstructor;
+import org.dongguk.userapi.adapter.out.repository.UserRepository;
 import org.dongguk.userapi.application.port.in.command.UpdateUserCommand;
 import org.dongguk.userapi.application.port.in.query.FindUserQuery;
 import org.dongguk.userapi.application.port.in.usecase.UserRequestUseCase;
@@ -13,6 +14,7 @@ import org.dongguk.userapi.domain.UserTag;
 import org.dongguk.userapi.dto.response.TagDto;
 import org.dongguk.userapi.dto.response.UserDetailDto;
 import org.dongguk.userapi.dto.response.FollowListDto;
+import org.dongguk.userapi.dto.response.UserNameDto;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -67,5 +69,29 @@ public class UserService implements UserRequestUseCase {
     @Override
     public void updateUserByUuid(UpdateUserCommand command) {
 
+    }
+
+    @Override
+    public UserNameDto findUserNameByUuid(String uuid) {
+        UserRepository.UserName userName = findUserPort.findUserNameByUuid(uuid);
+
+        return UserNameDto.builder()
+                .uuid(userName.getUuid().toString())
+                .nickname(userName.getNickname())
+                .profileImageUrl(userName.getProfileImageUrl())
+                .build();
+    }
+
+    @Override
+    public List<UserNameDto> findUserNamesByUuids(List<String> uuids) {
+        List<UserRepository.UserName> userNames = findUserPort.findUserNamesByUuids(uuids);
+
+        return userNames.stream()
+                .map(userName -> UserNameDto.builder()
+                        .uuid(userName.getUuid().toString())
+                        .nickname(userName.getNickname())
+                        .profileImageUrl(userName.getProfileImageUrl())
+                        .build())
+                .toList();
     }
 }

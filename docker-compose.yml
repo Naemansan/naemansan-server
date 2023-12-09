@@ -79,6 +79,16 @@ services:
     depends_on:
       - mysql-naemansan
 
+  course-api:
+    image: naemansan-course-api:0.0.1-SNAPSHOT
+    networks:
+      - naemansan_network
+    ports:
+      - "8083:8080"
+    depends_on:
+      - mysql-naemansan
+      - tag-api
+
 #  axon-server:
 #    container_name: axon-server
 #    image: axoniq/axonserver:4.6.3-jdk-11-dev
