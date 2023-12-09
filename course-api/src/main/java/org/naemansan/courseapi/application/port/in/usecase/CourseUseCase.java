@@ -10,11 +10,14 @@ import org.naemansan.courseapi.dto.response.CourseDetailDto;
 import org.naemansan.courseapi.dto.response.CourseListDto;
 
 import java.util.List;
+import java.util.Map;
 
 public interface CourseUseCase {
     CourseDetailDto createCourse(CreateCourseCommand command);
 
-    List<CourseListDto> findCourses(ReadCoursesCommand command);
+    Map<String, Object> findCourses(ReadCoursesCommand command);
+
+    Map<String, Object> findCoursesByLocation(ReadCoursesCommand command);
 
     CourseDetailDto findCourseById(ReadCourseCommand command);
 

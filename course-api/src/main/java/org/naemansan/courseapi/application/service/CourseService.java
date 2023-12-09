@@ -1,6 +1,9 @@
 package org.naemansan.courseapi.application.service;
 
 import lombok.RequiredArgsConstructor;
+import org.locationtech.jts.geom.Point;
+import org.naemansan.common.dto.response.PageInfo;
+import org.naemansan.courseapi.adapter.out.repository.CourseRepository;
 import org.naemansan.courseapi.application.port.in.command.CreateCourseCommand;
 import org.naemansan.courseapi.application.port.in.command.DeleteCourseCommand;
 import org.naemansan.courseapi.application.port.in.command.UpdateCourseCommand;
@@ -17,10 +20,15 @@ import org.naemansan.courseapi.dto.persistent.SpotPersistent;
 import org.naemansan.courseapi.dto.response.CourseDetailDto;
 import org.naemansan.courseapi.dto.response.CourseListDto;
 import org.naemansan.courseapi.utility.CourseUtil;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -33,7 +41,10 @@ public class CourseService implements CourseUseCase {
     private final TagServicePort tagServicePort;
 
     private final CourseRepositoryPort courseRepositoryPort;
+    private final CourseTagRepositoryPort courseTagRepositoryPort;
     private final SpotRepositoryPort spotRepositoryPort;
+    private final LikeRepositoryPort likeRepositoryPort;
+    private final MomentRepositoryPort momentRepositoryPort;
 
     @Override
     @Transactional
@@ -50,7 +61,7 @@ public class CourseService implements CourseUseCase {
                 UUID.fromString(command.getUserId()));
 
         // CourseTag 생성(해당하는 TagID가 유효한지 검증 로직 구현 안됨)
-        courseRepositoryPort.createCourseTags(command.getTagIds(), course);
+        courseTagRepositoryPort.createCourseTags(command.getTagIds(), course);
 
         // CourseSpot 생성(이미지 처리 로직 구현 안됨)
         spotRepositoryPort.saveAll(
@@ -82,8 +93,76 @@ public class CourseService implements CourseUseCase {
     }
 
     @Override
-    public List<CourseListDto> findCourses(ReadCoursesCommand command) {
-        return null;
+    public Map<String, Object> findCourses(ReadCoursesCommand command) {
+        Pageable pageable = PageRequest.of(
+                command.getPage(),
+                command.getSize(),
+                Sort.by("createdAt").descending());
+
+        Page<Course> courses = null;
+        if (command.getTagIds() == null) {
+            courses = courseRepositoryPort.findCourses(pageable);
+        } else {
+            courses = courseRepositoryPort.findCoursesByTagIds(command.getTagIds(), pageable);
+        }
+
+        Map<Long, Long> likeCounts = likeRepositoryPort.countByCourses(courses.getContent());
+        Map<Long, Long> momentCounts = momentRepositoryPort.countByCourses(courses.getContent());
+
+        return Map.of(
+                "courses", courses.stream()
+                        .map(course -> CourseListDto.builder()
+                                .id(course.getId())
+                                .title(course.getTitle())
+                                .startLocationName(course.getStartLocationName())
+                                .distance(String.valueOf(Math.round(course.getDistance())))
+                                .tags(tagServicePort.findByTagIds(
+                                        course.getTags().stream().map(CourseTag::getTagId).toList()))
+                                .momentCount(momentCounts.get(course.getId()))
+                                .likeCount(likeCounts.get(course.getId()))
+                                .build())
+                        .toList(),
+                "pageInfo", PageInfo.fromPage(courses)
+        );
+    }
+
+    @Override
+    public Map<String, Object> findCoursesByLocation(ReadCoursesCommand command) {
+        Point location = courseUtil.location2Point(command.getLocation());
+        Pageable pageable = PageRequest.of(
+                command.getPage(),
+                command.getSize(),
+                Sort.by("radius"));
+
+        Page<CourseRepository.LocationForm> locationForms = null;
+
+        if (command.getTagIds() == null) {
+            locationForms = courseRepositoryPort.findCoursesByLocation(location, pageable);
+        } else {
+            locationForms = courseRepositoryPort.findCoursesByTagIdsAndLocation(command.getTagIds(), location, pageable);
+        }
+
+        Map<Long, Course> courses = courseRepositoryPort.findCoursesByIds(
+                locationForms.getContent().stream().map(CourseRepository.LocationForm::getId).toList());
+
+        Map<Long, Long> likeCounts = likeRepositoryPort.countByCourses(courses.values().stream().toList());
+        Map<Long, Long> momentCounts = momentRepositoryPort.countByCourses(courses.values().stream().toList());
+
+        return Map.of(
+                "courses", locationForms.stream()
+                        .map(locationForm -> CourseListDto.builder()
+                                .id(locationForm.getId())
+                                .title(courses.get(locationForm.getId()).getTitle())
+                                .startLocationName(courses.get(locationForm.getId()).getStartLocationName())
+                                .distance(String.valueOf(Math.round(locationForm.getRadius())))
+                                .tags(tagServicePort.findByTagIds(
+                                        courses.get(locationForm.getId()).getTags().stream().map(CourseTag::getTagId).toList()))
+                                .momentCount(momentCounts.get(locationForm.getId()))
+                                .likeCount(likeCounts.get(locationForm.getId()))
+                                .build())
+                        .toList(),
+                "pageInfo", PageInfo.fromPage(locationForms)
+        );
     }
 
     @Override
@@ -126,12 +205,12 @@ public class CourseService implements CourseUseCase {
         List<Spot> spots = spotRepositoryPort.findByCourse(course);
 
         // Delete
-        courseRepositoryPort.deleteCourseTags(course.getTags());
+        courseTagRepositoryPort.deleteCourseTags(course.getTags());
         spotRepositoryPort.deleteAll(spots);
 
         // Update
         course.update(command.getTitle(), command.getContent());
-        courseRepositoryPort.createCourseTags(command.getTagIds(), course);
+        courseTagRepositoryPort.createCourseTags(command.getTagIds(), course);
         spotRepositoryPort.saveAll(
                 command.getSpots().stream()
                         .map(spot -> SpotPersistent.fromDto(

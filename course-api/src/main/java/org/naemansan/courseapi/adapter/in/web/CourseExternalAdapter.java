@@ -4,12 +4,16 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.naemansan.common.annotaion.WebAdapter;
 import org.naemansan.common.dto.response.ResponseDto;
+import org.naemansan.common.dto.type.ErrorCode;
+import org.naemansan.common.exception.CommonException;
 import org.naemansan.courseapi.application.port.in.command.CreateCourseCommand;
 import org.naemansan.courseapi.application.port.in.command.DeleteCourseCommand;
 import org.naemansan.courseapi.application.port.in.command.UpdateCourseCommand;
 import org.naemansan.courseapi.application.port.in.command.UpdateCourseStatusCommand;
 import org.naemansan.courseapi.application.port.in.query.ReadCourseCommand;
+import org.naemansan.courseapi.application.port.in.query.ReadCoursesCommand;
 import org.naemansan.courseapi.application.port.in.usecase.CourseUseCase;
+import org.naemansan.courseapi.dto.common.LocationDto;
 import org.naemansan.courseapi.dto.request.CourseDto;
 import org.naemansan.courseapi.dto.request.CourseUpdateDto;
 import org.naemansan.courseapi.dto.request.CourseUpdateStatusDto;
@@ -40,14 +44,24 @@ public class CourseExternalAdapter {
     }
 
     @GetMapping("")
-    public String readCourses(
-            @RequestParam(value = "tagIds") List<Long> tagIds,
-            @RequestParam(value = "lati") Double lati,
-            @RequestParam(value = "longi") Double longi,
+    public ResponseDto<?> readCourses(
+            @RequestParam(value = "tagIds", required = false) List<Long> tagIds,
+            @RequestParam(value = "lati", required = false) Double lati,
+            @RequestParam(value = "longi", required = false) Double longi,
             @RequestParam(value = "page") Integer page,
             @RequestParam(value = "size") Integer size
     ) {
-        return "readCourseInfo";
+        if (page < 0 || size < 0) {
+            throw new CommonException(ErrorCode.INVALID_ARGUMENT);
+        }
+
+        if (lati != null && longi != null) {
+            return ResponseDto.ok(courseUseCase.findCoursesByLocation(
+                    ReadCoursesCommand.of(tagIds, new LocationDto(lati, longi), page, size)));
+        } else {
+            return ResponseDto.ok(courseUseCase.findCourses(
+                    ReadCoursesCommand.of(tagIds, null, page, size)));
+        }
     }
 
     @GetMapping("/{courseId}")
