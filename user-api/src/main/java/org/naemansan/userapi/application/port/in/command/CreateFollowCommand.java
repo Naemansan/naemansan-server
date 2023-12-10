@@ -13,14 +13,14 @@ import org.naemansan.common.SelfValidating;
 public class CreateFollowCommand extends SelfValidating<CreateFollowCommand> {
     @NotNull
     @Size(min = 36, max = 36)
-    String followingUuid;
+    String followingId;
     @NotNull
     @Size(min = 36, max = 36)
-    String followedUuid;
+    String followerId;
 
-    public CreateFollowCommand(String followingUuid, String followedUuid) {
-        this.followingUuid = followingUuid;
-        this.followedUuid = followedUuid;
+    public CreateFollowCommand(String followingId, String followerId) {
+        this.followingId = followingId;
+        this.followerId = followerId;
         this.validateSelf();
     }
 }

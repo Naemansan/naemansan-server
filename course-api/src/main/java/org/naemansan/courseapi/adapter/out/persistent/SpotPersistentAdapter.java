@@ -18,7 +18,13 @@ public class SpotPersistentAdapter implements SpotRepositoryPort {
 
     @Override
     public void save(SpotPersistent spot, Course course) {
-
+        spotRepository.save(Spot.builder()
+                .title(spot.title())
+                .content(spot.content())
+                .location(spot.location())
+                .thumbnail(spot.thumbnail())
+                .category(spot.category())
+                .course(course).build());
     }
 
     @Override

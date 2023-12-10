@@ -2,10 +2,14 @@ package org.naemansan.userapi.adapter.in.web;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.naemansan.common.dto.type.ErrorCode;
+import org.naemansan.common.exception.CommonException;
 import org.naemansan.userapi.adapter.out.repository.UserRepository;
 import org.naemansan.userapi.application.port.in.command.UpdateUserCommand;
-import org.naemansan.userapi.application.port.in.query.FindUserQuery;
-import org.naemansan.userapi.application.port.in.usecase.UserRequestUseCase;
+import org.naemansan.userapi.application.port.in.query.ReadUserDependenceQuery;
+import org.naemansan.userapi.application.port.in.query.ReadUserQuery;
+import org.naemansan.userapi.application.port.in.usecase.FollowUseCase;
+import org.naemansan.userapi.application.port.in.usecase.UserUseCase;
 import org.naemansan.userapi.domain.User;
 import org.naemansan.userapi.dto.request.UserUpdateDto;
 import org.naemansan.userapi.dto.response.UserDetailDto;
@@ -23,7 +27,8 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/users")
 public class UserExternalController {
-    private final UserRequestUseCase userRequestUseCase;
+    private final UserUseCase userUseCase;
+    private final FollowUseCase followUseCase;
     private final UserRepository userRepository;
 
     @PostMapping("")
@@ -40,22 +45,20 @@ public class UserExternalController {
                 .introduction(user.getIntroduction())
                 .profileImageUrl(user.getProfileImageUrl())
                 .tags(List.of())
-                .followings(List.of())
-                .followers(List.of())
                 .build();
     }
 
     @GetMapping("")
     public ResponseDto<?> readUser() {
         String uuid = "625ad265-cc31-44fd-b783-e8cd047b6903";
-        return ResponseDto.ok(userRequestUseCase.findUserDetailByUuid(FindUserQuery.of(uuid)));
+        return ResponseDto.ok(userUseCase.findUserDetailByUuid(ReadUserQuery.of(uuid)));
     }
 
-    @GetMapping("/{userUuid}")
+    @GetMapping("/{userId}")
     public ResponseDto<?> readAntherUser(
-            @PathVariable("userUuid") String userUuid
+            @PathVariable("userId") String userUuid
     ) {
-        return ResponseDto.ok(userRequestUseCase.findUserDetailByUuid(FindUserQuery.of(userUuid)));
+        return ResponseDto.ok(userUseCase.findUserDetailByUuid(ReadUserQuery.of(userUuid)));
     }
 
     @PutMapping("")
@@ -63,7 +66,7 @@ public class UserExternalController {
             @RequestPart(value = "body", required = false) @Valid UserUpdateDto requestDto,
             @RequestPart(value = "image", required = false) MultipartFile imgFile
     ) {
-        userRequestUseCase.updateUserByUuid(UpdateUserCommand.of(
+        userUseCase.updateUserByUuid(UpdateUserCommand.of(
                 "625ad265-cc31-44fd-b783-e8cd047b6903",
                 requestDto.nickname(),
                 requestDto.introduction(),
@@ -72,5 +75,38 @@ public class UserExternalController {
         ));
 
         return ResponseDto.ok("updateUserInfo");
+    }
+
+    @GetMapping("/followings")
+    public ResponseDto<?> readFollowings(
+            @RequestParam(value = "page") Integer page,
+            @RequestParam(value = "size") Integer size
+    ) {
+        if (page < 0 || size < 0) {
+            throw new CommonException(ErrorCode.INVALID_PARAMETER);
+        }
+
+        String userId = "625ad265-cc31-44fd-b783-e8cd047b6903";
+        return ResponseDto.ok(followUseCase.findFollowingByUserId(ReadUserDependenceQuery.builder()
+                .userId(userId)
+                .page(page)
+                .size(size)
+                .build()));
+    }
+
+    @GetMapping("/followers")
+    public ResponseDto<?> readFollowers(
+            @RequestParam(value = "page") Integer page,
+            @RequestParam(value = "size") Integer size
+    ) {
+        if (page < 0 || size < 0) {
+            throw new CommonException(ErrorCode.INVALID_PARAMETER);
+        }
+        String userId = "625ad265-cc31-44fd-b783-e8cd047b6903";
+        return ResponseDto.ok(followUseCase.findFollowerByUserId(ReadUserDependenceQuery.builder()
+                .userId(userId)
+                .page(page)
+                .size(size)
+                .build()));
     }
 }

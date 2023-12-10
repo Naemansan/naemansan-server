@@ -18,8 +18,8 @@ public enum ErrorCode {
     // Invalid Argument Error
     MISSING_REQUEST_PARAMETER(40000, HttpStatus.BAD_REQUEST, "필수 요청 파라미터가 누락되었습니다."),
     MISSING_REQUEST_HEADER(40000, HttpStatus.BAD_REQUEST, "필수 요청 헤더가 누락되었습니다."),
-    INVALID_PARAMETER_FORMAT(40001, HttpStatus.BAD_REQUEST, "요청에 유효하지 않은 인자 형식입니다."),
-    INVALID_ARGUMENT(40001, HttpStatus.BAD_REQUEST, "요청에 유효하지 않은 인자입니다."),
+    INVALID_PARAMETER_FORMAT(40001, HttpStatus.BAD_REQUEST, "요청에 유효하지 않은 파라미터 형식입니다."),
+    INVALID_PARAMETER(40001, HttpStatus.BAD_REQUEST, "요청에 유효하지 않은 파라미터입니다."),
     INVALID_HEADER(40001, HttpStatus.BAD_REQUEST, "유효하지 않은 헤더입니다."),
     INVALID_CONTEXT_TYPE(40001, HttpStatus.BAD_REQUEST, "유효하지 않은 컨텐츠 타입입니다."),
     BAD_REQUEST_PARAMETER(40002, HttpStatus.BAD_REQUEST, "잘못된 파라미터 형식입니다."),

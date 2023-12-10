@@ -16,6 +16,7 @@ import org.naemansan.courseapi.application.port.in.query.ReadCoursesCommand;
 import org.naemansan.courseapi.application.port.in.query.ReadMomentsCommand;
 import org.naemansan.courseapi.application.port.in.usecase.CourseUseCase;
 import org.naemansan.courseapi.application.port.in.usecase.MomentUseCase;
+import org.naemansan.courseapi.application.port.in.usecase.SpotUseCase;
 import org.naemansan.courseapi.dto.common.LocationDto;
 import org.naemansan.courseapi.dto.request.CourseDto;
 import org.naemansan.courseapi.dto.request.CourseUpdateDto;
@@ -31,6 +32,7 @@ import java.util.List;
 public class CourseExternalAdapter {
     private final CourseUseCase courseUseCase;
     private final MomentUseCase momentUseCase;
+    private final SpotUseCase spotUseCase;
 
     @PostMapping("")
     public ResponseDto<?> createCourse(
@@ -56,7 +58,7 @@ public class CourseExternalAdapter {
             @RequestParam(value = "size") Integer size
     ) {
         if (page < 0 || size < 0) {
-            throw new CommonException(ErrorCode.INVALID_ARGUMENT);
+            throw new CommonException(ErrorCode.INVALID_PARAMETER);
         }
 
         if (lati != null && longi != null) {
@@ -118,10 +120,11 @@ public class CourseExternalAdapter {
 
     /* Course Dependency */
     @GetMapping("/{courseId}/spots")
-    public String readSpotsByCourse(
+    public ResponseDto<?> readSpotsByCourse(
             @PathVariable("courseId") Long courseId
     ) {
-        return "readCourseInfo";
+        return ResponseDto.ok(spotUseCase.findSpotsByCourseId(ReadCourseDependenceCommand.builder()
+                .courseId(courseId).build()));
     }
 
     @GetMapping("/{courseId}/moments")
@@ -131,7 +134,7 @@ public class CourseExternalAdapter {
             @RequestParam Integer size
     ) {
         if (page < 0 || size < 0) {
-            throw new CommonException(ErrorCode.INVALID_ARGUMENT);
+            throw new CommonException(ErrorCode.INVALID_PARAMETER);
         }
 
         return ResponseDto.ok(momentUseCase.findMomentsByCourseId(ReadCourseDependenceCommand.builder()

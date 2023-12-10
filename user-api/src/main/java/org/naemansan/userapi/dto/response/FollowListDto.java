@@ -5,10 +5,8 @@ import lombok.Builder;
 
 @Builder
 public record FollowListDto(
-        @JsonProperty("id")
-        Long id,
-        @JsonProperty("user_uuid")
-        String userUuid,
+        @JsonProperty("userId")
+        String userId,
 
         @JsonProperty("nickname")
         String nickname,

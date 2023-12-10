@@ -15,7 +15,7 @@ public class ArgumentNotValidExceptionDto extends ExceptionDto {
     private final Map<String, String> errorFields;
 
     public ArgumentNotValidExceptionDto(final MethodArgumentNotValidException methodArgumentNotValidException) {
-        super(ErrorCode.INVALID_ARGUMENT);
+        super(ErrorCode.INVALID_PARAMETER);
 
         this.errorFields = new HashMap<>();
         methodArgumentNotValidException.getBindingResult()
@@ -23,7 +23,7 @@ public class ArgumentNotValidExceptionDto extends ExceptionDto {
     }
 
     public ArgumentNotValidExceptionDto(final ConstraintViolationException constraintViolationException) {
-        super(ErrorCode.INVALID_ARGUMENT);
+        super(ErrorCode.INVALID_PARAMETER);
 
         this.errorFields = new HashMap<>();
 

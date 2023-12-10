@@ -3,14 +3,12 @@ package org.naemansan.userapi.application.service;
 import lombok.RequiredArgsConstructor;
 import org.naemansan.userapi.adapter.out.repository.UserRepository;
 import org.naemansan.userapi.application.port.in.command.UpdateUserCommand;
-import org.naemansan.userapi.application.port.in.query.FindUserQuery;
-import org.naemansan.userapi.application.port.in.usecase.UserRequestUseCase;
-import org.naemansan.userapi.domain.Follow;
+import org.naemansan.userapi.application.port.in.query.ReadUserQuery;
+import org.naemansan.userapi.application.port.in.usecase.UserUseCase;
 import org.naemansan.userapi.domain.User;
 import org.naemansan.userapi.domain.UserTag;
 import org.naemansan.userapi.dto.response.TagDto;
 import org.naemansan.userapi.dto.response.UserDetailDto;
-import org.naemansan.userapi.dto.response.FollowListDto;
 import org.naemansan.userapi.dto.response.UserNameDto;
 import org.naemansan.userapi.application.port.out.*;
 import org.springframework.stereotype.Service;
@@ -21,7 +19,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class UserService implements UserRequestUseCase {
+public class UserService implements UserUseCase {
     private final TagServicePort tagServicePort;
     private final ImageServicePort imageServicePort;
 
@@ -30,7 +28,7 @@ public class UserService implements UserRequestUseCase {
     private final UserTagRepositoryPort userTagRepositoryPort;
 
     @Override
-    public UserDetailDto findUserDetailByUuid(FindUserQuery command) {
+    public UserDetailDto findUserDetailByUuid(ReadUserQuery command) {
         User user = userRepositoryPort.findUserDetailByUuid(command.getUuid());
 
         List<TagDto> tags = new ArrayList<>();
@@ -41,31 +39,12 @@ public class UserService implements UserRequestUseCase {
                             .toList()));
         }
 
-        List<Follow> followings = followRepositoryPort.findFollowingByUuid(user);
-        List<Follow> followers = followRepositoryPort.findFollowedByUuid(user);
-
         return UserDetailDto.builder()
                 .uuid(user.getUuid().toString())
                 .nickname(user.getNickname())
                 .introduction(user.getIntroduction())
                 .profileImageUrl(user.getProfileImageUrl())
                 .tags(tags)
-                .followings(followings.stream()
-                        .map(follow -> FollowListDto.builder()
-                                .id(follow.getId())
-                                .userUuid(follow.getFollowed().getUuid().toString())
-                                .nickname(follow.getFollowed().getNickname())
-                                .profileImageUrl(follow.getFollowed().getProfileImageUrl())
-                                .build())
-                        .toList())
-                .followers(followers.stream()
-                        .map(follow -> FollowListDto.builder()
-                                .id(follow.getId())
-                                .userUuid(follow.getFollowing().getUuid().toString())
-                                .nickname(follow.getFollowing().getNickname())
-                                .profileImageUrl(follow.getFollowing().getProfileImageUrl())
-                                .build())
-                        .toList())
                 .build();
     }
 

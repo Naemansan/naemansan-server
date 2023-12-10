@@ -20,12 +20,6 @@ public record UserDetailDto(
         String profileImageUrl,
 
         @JsonProperty("tags")
-        List<TagDto> tags,
-
-        @JsonProperty("followings")
-        List<FollowListDto> followings,
-
-        @JsonProperty("followers")
-        List<FollowListDto> followers
+        List<TagDto> tags
 ) {
 }

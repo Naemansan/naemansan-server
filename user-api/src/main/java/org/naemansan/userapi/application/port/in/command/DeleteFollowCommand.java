@@ -1,20 +1,26 @@
 package org.naemansan.userapi.application.port.in.command;
 
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.naemansan.common.SelfValidating;
 
 @Getter
-@Builder
 @EqualsAndHashCode(callSuper = false)
 public class DeleteFollowCommand extends SelfValidating<DeleteFollowCommand> {
     @NotNull
-    private final Long followId;
+    @Size(min = 36, max = 36)
+    String followingId;
+    @NotNull
+    @Size(min = 36, max = 36)
+    String followerId;
 
-    public DeleteFollowCommand(Long followId) {
-        this.followId = followId;
+    @Builder
+    public DeleteFollowCommand(String followingId, String followerId) {
+        this.followingId = followingId;
+        this.followerId = followerId;
         this.validateSelf();
     }
 }

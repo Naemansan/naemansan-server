@@ -1,5 +1,6 @@
 package org.naemansan.courseapi.application.port.in.query;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import org.naemansan.common.SelfValidating;
@@ -7,7 +8,9 @@ import org.naemansan.common.SelfValidating;
 @Getter
 @Builder
 public class ReadCourseDependenceCommand extends SelfValidating<ReadCourseDependenceCommand> {
+    @NotNull
     private final Long courseId;
+
     private final Integer page;
     private final Integer size;
 

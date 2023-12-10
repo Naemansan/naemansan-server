@@ -5,16 +5,16 @@ import lombok.Getter;
 import org.naemansan.common.SelfValidating;
 
 @Getter
-public class FindUserQuery extends SelfValidating<FindUserQuery> {
+public class ReadUserQuery extends SelfValidating<ReadUserQuery> {
     @NotNull
     private final String uuid;
 
-    private FindUserQuery(String uuid) {
+    private ReadUserQuery(String uuid) {
         this.uuid = uuid;
         this.validateSelf();
     }
 
-    public static FindUserQuery of(String uuid) {
-        return new FindUserQuery(uuid);
+    public static ReadUserQuery of(String uuid) {
+        return new ReadUserQuery(uuid);
     }
 }

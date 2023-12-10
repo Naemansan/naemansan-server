@@ -37,7 +37,7 @@ public class MomentExternalAdapter {
             @RequestParam Integer size
     ) {
         if (page < 0 || size < 0) {
-            throw new CommonException(ErrorCode.INVALID_ARGUMENT);
+            throw new CommonException(ErrorCode.INVALID_PARAMETER);
         }
 
         return ResponseDto.ok(momentUseCase.findMoments(ReadMomentsCommand.builder()
