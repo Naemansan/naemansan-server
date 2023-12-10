@@ -39,6 +39,12 @@ public record CourseDetailDto(
         String userNickName,
 
         @JsonProperty("userProfileImageUrl")
-        String userProfileImageUrl
+        String userProfileImageUrl,
+
+        @JsonProperty("isLike")
+        Boolean isLike,
+
+        @JsonProperty("likeCount")
+        Long likeCount
 ) {
 }

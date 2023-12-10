@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -23,6 +24,8 @@ public interface LikeRepository extends JpaRepository<Like, Long> {
     @Query("select l.course.id as courseId, case when count(l.id) > 0 then true else false end as exists " +
             "from Like l where l.course in :courses and l.userId = :userId group by l.course.id")
     List<LikeExists> existsByCoursesAndUserId(List<Course> course, UUID userId);
+
+    Optional<Like> findByUserIdAndCourse(UUID uuid, Course course);
 
 
     interface LikeCount {
