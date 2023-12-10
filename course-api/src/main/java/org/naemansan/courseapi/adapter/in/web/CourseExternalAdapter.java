@@ -11,8 +11,11 @@ import org.naemansan.courseapi.application.port.in.command.DeleteCourseCommand;
 import org.naemansan.courseapi.application.port.in.command.UpdateCourseCommand;
 import org.naemansan.courseapi.application.port.in.command.UpdateCourseStatusCommand;
 import org.naemansan.courseapi.application.port.in.query.ReadCourseCommand;
+import org.naemansan.courseapi.application.port.in.query.ReadCourseDependenceCommand;
 import org.naemansan.courseapi.application.port.in.query.ReadCoursesCommand;
+import org.naemansan.courseapi.application.port.in.query.ReadMomentsCommand;
 import org.naemansan.courseapi.application.port.in.usecase.CourseUseCase;
+import org.naemansan.courseapi.application.port.in.usecase.MomentUseCase;
 import org.naemansan.courseapi.dto.common.LocationDto;
 import org.naemansan.courseapi.dto.request.CourseDto;
 import org.naemansan.courseapi.dto.request.CourseUpdateDto;
@@ -27,6 +30,7 @@ import java.util.List;
 @RequestMapping("/courses")
 public class CourseExternalAdapter {
     private final CourseUseCase courseUseCase;
+    private final MomentUseCase momentUseCase;
 
     @PostMapping("")
     public ResponseDto<?> createCourse(
@@ -121,9 +125,18 @@ public class CourseExternalAdapter {
     }
 
     @GetMapping("/{courseId}/moments")
-    public String readMomentsByCourse(
-            @PathVariable("courseId") Long courseId
+    public ResponseDto<?> readMomentsByCourse(
+            @PathVariable("courseId") Long courseId,
+            @RequestParam Integer page,
+            @RequestParam Integer size
     ) {
-        return "readCourseInfo";
+        if (page < 0 || size < 0) {
+            throw new CommonException(ErrorCode.INVALID_ARGUMENT);
+        }
+
+        return ResponseDto.ok(momentUseCase.findMomentsByCourseId(ReadCourseDependenceCommand.builder()
+                .courseId(courseId)
+                .page(page)
+                .size(size).build()));
     }
 }

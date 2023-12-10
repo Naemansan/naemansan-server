@@ -43,7 +43,7 @@ public class CoursePersistentAdapter implements CourseRepositoryPort {
 
     @Override
     public Map<Long, Course> findCoursesByIds(List<Long> ids) {
-        List<Course> courses = courseRepository.findAllById(ids);
+        List<Course> courses = courseRepository.findByIdIn(ids);
 
         return courses.stream().collect(
                 Collectors.toMap(Course::getId, course -> course)
@@ -51,7 +51,7 @@ public class CoursePersistentAdapter implements CourseRepositoryPort {
     }
 
     @Override
-    public Page<Course> findCoursesByTagIds(List<Long> tagIds, Pageable pageable) {
+    public Page<CourseRepository.DateForm> findCoursesByTagIds(List<Long> tagIds, Pageable pageable) {
         return courseRepository.findAllByTagIds(tagIds, pageable);
     }
 

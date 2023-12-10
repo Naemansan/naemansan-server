@@ -9,6 +9,7 @@ import org.hibernate.annotations.Where;
 import org.naemansan.courseapi.dto.type.EEmotion;
 import org.naemansan.courseapi.dto.type.EWeather;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
@@ -37,6 +38,9 @@ public class Moment {
     @Enumerated(EnumType.STRING)
     private EWeather weather;
 
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDate createdAt;
+
     @Column(name = "is_deleted", nullable = false)
     private Boolean isDeleted;
 
@@ -45,10 +49,15 @@ public class Moment {
     private Course course;
 
     @Builder
-    public Moment(UUID userId, String content, EEmotion emotion, EWeather weather) {
+    public Moment(UUID userId, Course course,
+                  String content, EEmotion emotion, EWeather weather) {
         this.userId = userId;
+        this.course = course;
+
         this.content = content;
         this.emotion = emotion;
         this.weather = weather;
+        this.createdAt = LocalDate.now();
+        this.isDeleted = false;
     }
 }

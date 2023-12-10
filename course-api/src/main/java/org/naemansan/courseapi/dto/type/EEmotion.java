@@ -18,8 +18,6 @@ public enum EEmotion {
     FLUTTER("FLUTTER"),
     SADNESS("SADNESS");
 
-
-
     private final String value;
 
     @Override

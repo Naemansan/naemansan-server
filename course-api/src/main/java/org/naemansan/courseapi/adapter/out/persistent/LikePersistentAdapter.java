@@ -24,11 +24,11 @@ public class LikePersistentAdapter implements LikeRepositoryPort {
     public Map<Long, Boolean> existsByCoursesAndUserId(List<Course> course, UUID userId) {
         List<LikeRepository.LikeExists> likeExists = likeRepository.existsByCoursesAndUserId(course, userId);
 
-        return likeExists.stream()
-                .collect(
-                        Map::of,
-                        (map, likeExist) -> map.put(likeExist.getCourseId(), likeExist.getExists()),
-                        Map::putAll);
+        Map<Long, Boolean> result = new java.util.HashMap<>();
+
+        likeExists.forEach(likeExist -> result.put(likeExist.getCourseId(), likeExist.getExists()));
+
+        return result;
     }
 
     @Override
@@ -40,10 +40,10 @@ public class LikePersistentAdapter implements LikeRepositoryPort {
     public Map<Long, Long> countByCourses(List<Course> courses) {
         List<LikeRepository.LikeCount> likeCounts = likeRepository.countByCourses(courses);
 
-        return likeCounts.stream()
-                .collect(
-                        Map::of,
-                        (map, likeCount) -> map.put(likeCount.getCourseId(), likeCount.getCount()),
-                        Map::putAll);
+        Map<Long, Long> result = new java.util.HashMap<>();
+
+        likeCounts.forEach(likeCount -> result.put(likeCount.getCourseId(), likeCount.getCount()));
+
+        return result;
     }
 }

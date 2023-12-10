@@ -24,7 +24,7 @@ public interface CourseRepositoryPort {
 
     Map<Long, Course> findCoursesByIds(List<Long> ids);
 
-    Page<Course> findCoursesByTagIds(List<Long> tagIds, Pageable pageable);
+    Page<CourseRepository.DateForm> findCoursesByTagIds(List<Long> tagIds, Pageable pageable);
 
     Page<CourseRepository.LocationForm> findCoursesByLocation(Point location, Pageable pageable);
 

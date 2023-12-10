@@ -99,31 +99,51 @@ public class CourseService implements CourseUseCase {
                 command.getSize(),
                 Sort.by("createdAt").descending());
 
-        Page<Course> courses = null;
         if (command.getTagIds() == null) {
-            courses = courseRepositoryPort.findCourses(pageable);
+            Page<Course> courses = courseRepositoryPort.findCourses(pageable);
+
+            Map<Long, Long> likeCounts = likeRepositoryPort.countByCourses(courses.getContent());
+            Map<Long, Long> momentCounts = momentRepositoryPort.countByCourses(courses.getContent());
+
+            return Map.of(
+                    "courses", courses.stream()
+                            .map(course -> CourseListDto.builder()
+                                    .id(course.getId())
+                                    .title(course.getTitle())
+                                    .startLocationName(course.getStartLocationName())
+                                    .distance(String.valueOf(Math.round(course.getDistance())))
+                                    .tags(tagServicePort.findByTagIds(
+                                            course.getTags().stream().map(CourseTag::getTagId).toList()))
+                                    .momentCount(momentCounts.getOrDefault(course.getId(), 0L))
+                                    .likeCount(likeCounts.getOrDefault(course.getId(), 0L))
+                                    .build())
+                            .toList(),
+                    "pageInfo", PageInfo.fromPage(courses)
+            );
         } else {
-            courses = courseRepositoryPort.findCoursesByTagIds(command.getTagIds(), pageable);
+            Page<CourseRepository.DateForm> dataForms = courseRepositoryPort.findCoursesByTagIds(command.getTagIds(), pageable);
+
+            Map<Long, Course> courses = courseRepositoryPort.findCoursesByIds(
+                    dataForms.getContent().stream().map(CourseRepository.DateForm::getId).toList());
+            Map<Long, Long> likeCounts = likeRepositoryPort.countByCourses(courses.values().stream().toList());
+            Map<Long, Long> momentCounts = momentRepositoryPort.countByCourses(courses.values().stream().toList());
+
+            return Map.of(
+                    "courses", dataForms.stream()
+                            .map(dataForm -> CourseListDto.builder()
+                                    .id(dataForm.getId())
+                                    .title(courses.get(dataForm.getId()).getTitle())
+                                    .startLocationName(courses.get(dataForm.getId()).getStartLocationName())
+                                    .distance(String.valueOf(Math.round(courses.get(dataForm.getId()).getDistance())))
+                                    .tags(tagServicePort.findByTagIds(
+                                            courses.get(dataForm.getId()).getTags().stream().map(CourseTag::getTagId).toList()))
+                                    .momentCount(momentCounts.getOrDefault(dataForm.getId(), 0L))
+                                    .likeCount(likeCounts.getOrDefault(dataForm.getId(), 0L))
+                                    .build())
+                            .toList(),
+                    "pageInfo", PageInfo.fromPage(dataForms)
+            );
         }
-
-        Map<Long, Long> likeCounts = likeRepositoryPort.countByCourses(courses.getContent());
-        Map<Long, Long> momentCounts = momentRepositoryPort.countByCourses(courses.getContent());
-
-        return Map.of(
-                "courses", courses.stream()
-                        .map(course -> CourseListDto.builder()
-                                .id(course.getId())
-                                .title(course.getTitle())
-                                .startLocationName(course.getStartLocationName())
-                                .distance(String.valueOf(Math.round(course.getDistance())))
-                                .tags(tagServicePort.findByTagIds(
-                                        course.getTags().stream().map(CourseTag::getTagId).toList()))
-                                .momentCount(momentCounts.get(course.getId()))
-                                .likeCount(likeCounts.get(course.getId()))
-                                .build())
-                        .toList(),
-                "pageInfo", PageInfo.fromPage(courses)
-        );
     }
 
     @Override
@@ -157,8 +177,8 @@ public class CourseService implements CourseUseCase {
                                 .distance(String.valueOf(Math.round(locationForm.getRadius())))
                                 .tags(tagServicePort.findByTagIds(
                                         courses.get(locationForm.getId()).getTags().stream().map(CourseTag::getTagId).toList()))
-                                .momentCount(momentCounts.get(locationForm.getId()))
-                                .likeCount(likeCounts.get(locationForm.getId()))
+                                .momentCount(momentCounts.getOrDefault(locationForm.getId(), 0L))
+                                .likeCount(likeCounts.getOrDefault(locationForm.getId(), 0L))
                                 .build())
                         .toList(),
                 "pageInfo", PageInfo.fromPage(locationForms)
