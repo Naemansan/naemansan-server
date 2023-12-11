@@ -18,8 +18,6 @@ public class SpotService implements SpotUseCase {
     private final CourseRepositoryPort courseRepositoryPort;
     private final SpotRepositoryPort spotRepositoryPort;
 
-    private final CourseUtil courseUtil;
-
     @Override
     public List<SpotListDto> findSpots() {
         return null;
@@ -33,7 +31,7 @@ public class SpotService implements SpotUseCase {
                 .map(spot -> SpotListDto.builder()
                         .name(spot.getTitle())
                         .description(spot.getContent())
-                        .location(courseUtil.point2Location(spot.getLocation()))
+                        .location(CourseUtil.point2Location(spot.getLocation()))
                         .category(spot.getCategory())
                         .thumbnailUrl(spot.getThumbnailUrl()).build())
                 .toList();

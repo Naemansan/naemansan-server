@@ -1,8 +1,6 @@
 package org.naemansan.courseapi.application.service;
 
 import lombok.RequiredArgsConstructor;
-import org.naemansan.common.dto.type.ErrorCode;
-import org.naemansan.common.exception.CommonException;
 import org.naemansan.courseapi.application.port.in.command.CreateLikeCommand;
 import org.naemansan.courseapi.application.port.in.command.DeleteLikeCommand;
 import org.naemansan.courseapi.application.port.in.usecase.LikeUseCase;
@@ -11,7 +9,7 @@ import org.naemansan.courseapi.application.port.out.LikeRepositoryPort;
 import org.naemansan.courseapi.application.port.out.UserServicePort;
 import org.naemansan.courseapi.domain.Course;
 import org.naemansan.courseapi.domain.Like;
-import org.naemansan.courseapi.dto.common.UserNameDto;
+import org.naemansan.courseapi.dto.persistent.UserNamePersistent;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,7 +24,7 @@ public class LikeService implements LikeUseCase {
     @Override
     public void createLike(CreateLikeCommand command) {
         // 유저 존재 확인
-        UserNameDto userNameDto = userServicePort.findUserName(command.getUserId());
+        UserNamePersistent userNamePersistent = userServicePort.findUserName(command.getUserId());
 
         // 산책로 존재 확인
         Course course = courseRepositoryPort.findCourseById(command.getCourseId());
@@ -39,7 +37,7 @@ public class LikeService implements LikeUseCase {
     @Transactional
     public void deleteLike(DeleteLikeCommand command) {
         // 유저 존재 확인
-        UserNameDto userNameDto = userServicePort.findUserName(command.getUserId());
+        UserNamePersistent userNamePersistent = userServicePort.findUserName(command.getUserId());
 
         // 산책로 존재 확인
         Course course = courseRepositoryPort.findCourseById(command.getCourseId());

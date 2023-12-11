@@ -30,7 +30,7 @@ public record CourseDetailDto(
         String distance,
 
         @JsonProperty("createdAt")
-        LocalDate createdAt,
+        String createdAt,
 
         @JsonProperty("userId")
         String userId,

@@ -1,10 +1,10 @@
-package org.naemansan.courseapi.dto.common;
+package org.naemansan.courseapi.dto.persistent;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 
 @Builder
-public record TagDto(
+public record TagPersistent(
         @JsonProperty("id")
         Long id,
 

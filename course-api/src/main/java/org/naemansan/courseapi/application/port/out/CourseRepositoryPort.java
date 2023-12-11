@@ -26,9 +26,9 @@ public interface CourseRepositoryPort {
 
     Page<CourseRepository.DateForm> findCoursesByTagIds(List<Long> tagIds, Pageable pageable);
 
-    Page<CourseRepository.LocationForm> findCoursesByLocation(Point location, Pageable pageable);
+    Page<CourseRepository.RadiusForm> findCoursesByLocation(Point location, Pageable pageable);
 
-    Page<CourseRepository.LocationForm> findCoursesByTagIdsAndLocation(List<Long> tagIds, Point location, Pageable pageable);
+    Page<CourseRepository.RadiusForm> findCoursesByTagIdsAndLocation(List<Long> tagIds, Point location, Pageable pageable);
 
     Course findCourseById(Long id);
 
@@ -36,5 +36,5 @@ public interface CourseRepositoryPort {
 
     void deleteCourse(Course course);
 
-
+    List<Course> findNearCoursesByUserIdAndLocationAndIsEnrolled(UUID userId, Point location, Boolean isEnrolled);
 }

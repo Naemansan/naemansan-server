@@ -41,19 +41,37 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
             countQuery = "SELECT c.id AS id, ST_Distance_Sphere(:location, ST_GeometryN(c.locations, 1)) AS radius FROM courses c "
                     + "WHERE ST_Distance_Sphere(:location, ST_GeometryN(c.locations, 1)) <= 3000 AND c.is_deleted = false AND c.is_enrolled = true",
             nativeQuery = true)
-    Page<LocationForm> findAllByLocation(@Param("location") Point location, Pageable pageable);
+    Page<RadiusForm> findAllByLocation(@Param("location") Point location, Pageable pageable);
 
     @Query(value = "SELECT c.id AS id, ST_Distance_Sphere(:location, ST_GeometryN(c.locations, 1)) AS radius FROM courses c join course_tags ct on c.id = ct.course_id "
             + "WHERE ST_Distance_Sphere(:location, ST_GeometryN(c.locations, 1)) <= 3000 AND ct.tag_id in :tagIds AND c.is_deleted = false AND c.is_enrolled = true",
             countQuery = "SELECT c.id AS id, ST_Distance_Sphere(:location, ST_GeometryN(c.locations, 1)) AS radius FROM courses c join course_tags ct on c.id = ct.course_id "
                     + "WHERE ST_Distance_Sphere(:location, ST_GeometryN(c.locations, 1)) <= 3000 AND ct.tag_id in :tagIds AND c.is_deleted = false AND c.is_enrolled = true",
             nativeQuery = true)
-    Page<LocationForm> findAllByTagIdsAndLocation(@Param("tagIds") List<Long> tagIds, @Param("location") Point location, Pageable pageable);
+    Page<RadiusForm> findAllByTagIdsAndLocation(@Param("tagIds") List<Long> tagIds, @Param("location") Point location, Pageable pageable);
 
-    interface LocationForm {
+    @Query(value = "SELECT * FROM courses c " +
+            "WHERE ST_Distance_Sphere(:location, ST_GeometryN(c.locations, 1)) <= 300 " +
+            "AND c.is_deleted = false AND c.is_enrolled = :isEnrolled",
+            nativeQuery = true)
+    List<Course> findNearCoursesByLocationAndIsEnrolled(
+            @Param("location") Point location,
+            @Param("isEnrolled") Boolean isEnrolled);
+
+    @Query(value = "SELECT * FROM courses c " +
+            "WHERE ST_Distance_Sphere(:location, ST_GeometryN(c.locations, 1)) <= 300 " +
+            "AND c.user_id = :userId AND c.is_deleted = false AND c.is_enrolled = :isEnrolled",
+            nativeQuery = true)
+    List<Course> findNearCoursesByUserIdAndLocationAndIsEnrolled(
+            @Param("userId") UUID userId,
+            @Param("location") Point location,
+            @Param("isEnrolled") Boolean isEnrolled);
+
+    interface RadiusForm {
         Long getId();
         Double getRadius();
     }
+
 
     interface DateForm {
         Long getId();

@@ -6,7 +6,7 @@ import com.google.gson.JsonObject;
 import lombok.NoArgsConstructor;
 import org.naemansan.common.dto.type.ErrorCode;
 import org.naemansan.common.exception.CommonException;
-import org.naemansan.courseapi.dto.common.UserNameDto;
+import org.naemansan.courseapi.dto.persistent.UserNamePersistent;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -77,7 +77,7 @@ public class InternalClientUtil {
         return names;
     }
 
-    public UserNameDto getUserName(String uuid) {
+    public UserNamePersistent getUserName(String uuid) {
         // Header 설정
         headers.clear();
         headers.add("Content-Type", "application/json");
@@ -104,14 +104,14 @@ public class InternalClientUtil {
         JsonObject jsonObject = gson.fromJson(response.getBody(), JsonObject.class)
                 .getAsJsonObject("data");
 
-        return UserNameDto.of(
+        return UserNamePersistent.of(
                 jsonObject.get("uuid").getAsString(),
                 jsonObject.get("nickname").getAsString(),
                 jsonObject.get("profileImageUrl").getAsString()
         );
     }
 
-    public List<UserNameDto> getUserNames(List<String> userIds) {
+    public List<UserNamePersistent> getUserNames(List<String> userIds) {
         // Header 설정
         headers.clear();
         headers.add("Content-Type", "application/json");
@@ -150,7 +150,7 @@ public class InternalClientUtil {
         }
 
         // 후처리 후 반환
-        List<UserNameDto> names = new ArrayList<>();
+        List<UserNamePersistent> names = new ArrayList<>();
 
         JsonArray jsonArray = gson.fromJson(response.getBody(), JsonObject.class)
                 .getAsJsonArray("data");
@@ -158,7 +158,7 @@ public class InternalClientUtil {
         for (int i = 0; i < jsonArray.size(); i++) {
             JsonObject jsonObject = jsonArray.get(i).getAsJsonObject();
 
-            names.add(UserNameDto.of(
+            names.add(UserNamePersistent.of(
                     jsonObject.get("uuid").getAsString(),
                     jsonObject.get("nickname").getAsString(),
                     jsonObject.get("profileImageUrl").getAsString()

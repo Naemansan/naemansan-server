@@ -15,10 +15,16 @@ public record CourseUpdateDto(
         @Size(min = 1, max = 300)
         String content,
 
-        @JsonProperty("tagIds")
-        List<Long> tagIds,
+        @JsonProperty("createTagIds")
+        List<Long> createTagIds,
 
-        @JsonProperty("spots")
-        List<SpotDto> spots
+        @JsonProperty("deleteTagIds")
+        List<Long> deleteTagIds,
+
+        @JsonProperty("deleteSpotIds")
+        List<Long> deleteSpotIds,
+
+        @JsonProperty("createSpots")
+        List<SpotDto> createSpots
 ) {
 }

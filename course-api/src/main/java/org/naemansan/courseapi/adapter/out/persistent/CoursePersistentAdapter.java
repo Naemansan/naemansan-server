@@ -56,12 +56,12 @@ public class CoursePersistentAdapter implements CourseRepositoryPort {
     }
 
     @Override
-    public Page<CourseRepository.LocationForm> findCoursesByLocation(Point location, Pageable pageable) {
+    public Page<CourseRepository.RadiusForm> findCoursesByLocation(Point location, Pageable pageable) {
         return courseRepository.findAllByLocation(location, pageable);
     }
 
     @Override
-    public Page<CourseRepository.LocationForm> findCoursesByTagIdsAndLocation(List<Long> tagIds, Point location, Pageable pageable) {
+    public Page<CourseRepository.RadiusForm> findCoursesByTagIdsAndLocation(List<Long> tagIds, Point location, Pageable pageable) {
         return courseRepository.findAllByTagIdsAndLocation(tagIds, location, pageable);
     }
 
@@ -83,5 +83,16 @@ public class CoursePersistentAdapter implements CourseRepositoryPort {
     @Override
     public void deleteCourse(Course course) {
         courseRepository.delete(course);
+    }
+
+    @Override
+    public List<Course> findNearCoursesByUserIdAndLocationAndIsEnrolled(
+            UUID userId,
+            Point location,
+            Boolean isEnrolled) {
+        if (userId == null)
+            return courseRepository.findNearCoursesByLocationAndIsEnrolled(location, isEnrolled);
+        else
+            return courseRepository.findNearCoursesByUserIdAndLocationAndIsEnrolled(userId, location, isEnrolled);
     }
 }

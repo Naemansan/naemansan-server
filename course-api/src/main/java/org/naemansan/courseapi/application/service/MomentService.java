@@ -10,7 +10,7 @@ import org.naemansan.courseapi.application.port.out.*;
 import org.naemansan.courseapi.domain.Course;
 import org.naemansan.courseapi.domain.Moment;
 import org.naemansan.courseapi.dto.common.LocationDto;
-import org.naemansan.courseapi.dto.common.UserNameDto;
+import org.naemansan.courseapi.dto.persistent.UserNamePersistent;
 import org.naemansan.courseapi.dto.response.MomentListDto;
 import org.naemansan.courseapi.dto.type.EEmotion;
 import org.naemansan.courseapi.dto.type.EWeather;
@@ -34,17 +34,15 @@ public class MomentService implements MomentUseCase {
     private final WeatherServicePort weatherServicePort;
     private final EmotionServicePort emotionServicePort;
 
-    private final CourseUtil courseUtil;
-
     @Override
     public MomentListDto createMoment(CreateMomentCommand command) {
         // 유저 존재 확인
-        UserNameDto userName = userServicePort.findUserName(command.getUserId());
+        UserNamePersistent userName = userServicePort.findUserName(command.getUserId());
         // 코스 존재 확인
         Course course = courseRepositoryPort.findCourseById(command.getCourseId());
 
         // 입력 정보 분석
-        LocationDto location = courseUtil.multiPoint2Locations(course.getLocations()).get(0);
+        LocationDto location = CourseUtil.multiPoint2Locations(course.getLocations()).get(0);
         EEmotion emotion = emotionServicePort.analyzeContent(command.getContent());
         EWeather weather = weatherServicePort.getCurrentWeather(location);
 
@@ -81,7 +79,7 @@ public class MomentService implements MomentUseCase {
         Page<Moment> moments = momentRepositoryPort.findMoments(pageable);
 
         // 유저 이름 조회
-        List<UserNameDto> userNames = userServicePort.findUserNames(
+        List<UserNamePersistent> userNames = userServicePort.findUserNames(
                 moments.getContent().stream().map(moment -> moment.getUserId().toString()).toList()
         );
 
@@ -117,7 +115,7 @@ public class MomentService implements MomentUseCase {
         Page<Moment> moments = momentRepositoryPort.findMomentsByCourse(course, pageable);
 
         // 유저 이름 조회
-        List<UserNameDto> userNames = userServicePort.findUserNames(
+        List<UserNamePersistent> userNames = userServicePort.findUserNames(
                 moments.getContent().stream().map(moment -> moment.getUserId().toString()).toList()
         );
 
