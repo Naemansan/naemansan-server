@@ -60,6 +60,15 @@ services:
       - MYSQL_ROOT_PASSWORD=1234
       - MYSQL_DATABASE=naemansan
 
+  auth-api:
+    image: naemansan-auth-api:0.0.1-SNAPSHOT
+    networks:
+      - naemansan_network
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql-naemansan
+      - user-api
   user-api:
     image: naemansan-user-api:0.0.1-SNAPSHOT
     networks:
