@@ -10,7 +10,7 @@ public record CourseSimilarityDto(
         Long id,
         String title,
         String startLocationName,
-        Double distance,
+        String distance,
         List<String> tags
 ) {
 }

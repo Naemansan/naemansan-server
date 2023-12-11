@@ -44,7 +44,7 @@ public class SimilarityService implements SimilarityUseCase {
                         .id(course.getId())
                         .title(course.getTitle())
                         .startLocationName(course.getStartLocationName())
-                        .distance(course.getDistance())
+                        .distance(String.valueOf(Math.round(course.getDistance())))
                         .tags(course.getTags().isEmpty() ?
                                 List.of() :
                                 tagServicePort.findByTagIds(
@@ -71,7 +71,7 @@ public class SimilarityService implements SimilarityUseCase {
                         .id(course.getId())
                         .title(course.getTitle())
                         .startLocationName(course.getStartLocationName())
-                        .distance(course.getDistance())
+                        .distance(String.valueOf(Math.round(course.getDistance())))
                         .tags(course.getTags().isEmpty() ?
                                 List.of() :
                                 tagServicePort.findByTagIds(

@@ -232,7 +232,7 @@ public class CourseService implements CourseUseCase {
                                 .id(radiusForm.getId())
                                 .title(courses.get(radiusForm.getId()).getTitle())
                                 .startLocationName(courses.get(radiusForm.getId()).getStartLocationName())
-                                .distance(String.valueOf(Math.round(radiusForm.getRadius())))
+                                .distance(String.valueOf(Math.round(courses.get(radiusForm.getId()).getDistance())))
                                 .tags(tagServicePort.findByTagIds(
                                         courses.get(radiusForm.getId()).getTags().stream().map(CourseTag::getTagId).toList()))
                                 .momentCount(momentCounts.getOrDefault(radiusForm.getId(), 0L))
