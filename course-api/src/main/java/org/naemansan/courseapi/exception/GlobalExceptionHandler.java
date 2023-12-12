@@ -1,5 +1,6 @@
 package org.naemansan.courseapi.exception;
 
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.naemansan.common.dto.response.ResponseDto;
 import org.naemansan.common.dto.type.ErrorCode;
@@ -16,6 +17,12 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+    // @Valid 어노테이션을 사용하여 검증을 수행할 때 발생하는 예외
+    @ExceptionHandler(value = {ConstraintViolationException.class})
+    public ResponseDto<?> handleConstraintViolationException(ConstraintViolationException e) {
+        log.error("handleConstraintViolationException() in GlobalExceptionHandler throw ConstraintViolationException : {}", e.getMessage());
+        return ResponseDto.fail(e);
+    }
     // Convertor 에서 바인딩 실패시 발생하는 예외
     @ExceptionHandler(value = {HttpMessageNotReadableException.class})
     public ResponseDto<?> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
