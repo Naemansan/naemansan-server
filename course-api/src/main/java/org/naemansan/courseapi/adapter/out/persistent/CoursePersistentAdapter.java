@@ -9,6 +9,7 @@ import org.naemansan.common.exception.CommonException;
 import org.naemansan.courseapi.adapter.out.repository.CourseRepository;
 import org.naemansan.courseapi.application.port.out.CourseRepositoryPort;
 import org.naemansan.courseapi.domain.Course;
+import org.naemansan.courseapi.dto.type.EState;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -86,13 +87,13 @@ public class CoursePersistentAdapter implements CourseRepositoryPort {
     }
 
     @Override
-    public List<Course> findNearCoursesByUserIdAndLocationAndIsEnrolled(
+    public List<Course> findNearCoursesByUserIdAndLocationAndState(
             UUID userId,
             Point location,
-            Boolean isEnrolled) {
+            EState state) {
         if (userId == null)
-            return courseRepository.findNearCoursesByLocationAndIsEnrolled(location, isEnrolled);
+            return courseRepository.findNearCoursesByLocationAndState(location, state);
         else
-            return courseRepository.findNearCoursesByUserIdAndLocationAndIsEnrolled(userId, location, isEnrolled);
+            return courseRepository.findNearCoursesByUserIdAndLocationAndState(userId, location, state);
     }
 }

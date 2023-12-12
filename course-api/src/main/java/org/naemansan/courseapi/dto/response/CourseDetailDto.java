@@ -3,6 +3,7 @@ package org.naemansan.courseapi.dto.response;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import org.naemansan.courseapi.dto.common.LocationDto;
+import org.naemansan.courseapi.dto.common.TagDto;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -12,19 +13,19 @@ public record CourseDetailDto(
         @JsonProperty("id")
         Long id,
 
-        @JsonProperty("title")
+        @JsonProperty("name")
         String title,
 
-        @JsonProperty("content")
+        @JsonProperty("description")
         String content,
-        @JsonProperty("siDongGu")
+        @JsonProperty("startLocationName")
         String startLocationName,
 
         @JsonProperty("locations")
         List<LocationDto> locations,
 
         @JsonProperty("tags")
-        List<String> tags,
+        List<TagDto> tags,
 
         @JsonProperty("distance")
         String distance,
@@ -40,9 +41,6 @@ public record CourseDetailDto(
 
         @JsonProperty("userProfileImageUrl")
         String userProfileImageUrl,
-
-        @JsonProperty("isLike")
-        Boolean isLike,
 
         @JsonProperty("likeCount")
         Long likeCount

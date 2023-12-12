@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import lombok.NoArgsConstructor;
 import org.naemansan.common.dto.type.ErrorCode;
 import org.naemansan.common.exception.CommonException;
+import org.naemansan.courseapi.dto.common.TagDto;
 import org.naemansan.courseapi.dto.persistent.UserNamePersistent;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -16,8 +17,8 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.List;
+import javax.swing.text.html.Option;
+import java.util.*;
 
 @Component
 @NoArgsConstructor
@@ -26,7 +27,7 @@ public class InternalClientUtil {
     private final Gson gson = new Gson();
     private final HttpHeaders headers = new HttpHeaders();
 
-    public List<String> getTagNames(List<Long> tagIds) {
+    public List<TagDto> getTagNames(List<Long> tagIds) {
         // Header 설정
         headers.clear();
         headers.add("Content-Type", "application/json");
@@ -64,17 +65,20 @@ public class InternalClientUtil {
         }
 
         // 후처리 후 반환
-        List<String> names = new ArrayList<>();
+        List<TagDto> tags = new ArrayList<>();
         JsonArray jsonArray = gson.fromJson(response.getBody(), JsonObject.class)
                 .getAsJsonArray("data");
 
         for (int i = 0; i < jsonArray.size(); i++) {
             JsonObject jsonObject = jsonArray.get(i).getAsJsonObject();
 
-            names.add(jsonObject.get("name").getAsString());
+            tags.add(TagDto.builder()
+                    .id(jsonObject.get("id").getAsLong())
+                    .name(jsonObject.get("name").getAsString())
+                    .build());
         }
 
-        return names;
+        return tags;
     }
 
     public UserNamePersistent getUserName(String uuid) {
@@ -105,13 +109,13 @@ public class InternalClientUtil {
                 .getAsJsonObject("data");
 
         return UserNamePersistent.of(
-                jsonObject.get("uuid").getAsString(),
+                jsonObject.get("id").getAsString(),
                 jsonObject.get("nickname").getAsString(),
                 jsonObject.get("profileImageUrl").getAsString()
         );
     }
 
-    public List<UserNamePersistent> getUserNames(List<String> userIds) {
+    public Map<String, UserNamePersistent> getUserNames(List<String> userIds) {
         // Header 설정
         headers.clear();
         headers.add("Content-Type", "application/json");
@@ -150,7 +154,7 @@ public class InternalClientUtil {
         }
 
         // 후처리 후 반환
-        List<UserNamePersistent> names = new ArrayList<>();
+        Map<String, UserNamePersistent> names = new HashMap<>();
 
         JsonArray jsonArray = gson.fromJson(response.getBody(), JsonObject.class)
                 .getAsJsonArray("data");
@@ -158,11 +162,14 @@ public class InternalClientUtil {
         for (int i = 0; i < jsonArray.size(); i++) {
             JsonObject jsonObject = jsonArray.get(i).getAsJsonObject();
 
-            names.add(UserNamePersistent.of(
-                    jsonObject.get("uuid").getAsString(),
-                    jsonObject.get("nickname").getAsString(),
-                    jsonObject.get("profileImageUrl").getAsString()
-            ));
+            names.put(
+                    jsonObject.get("id").getAsString(),
+                    UserNamePersistent.of(
+                            jsonObject.get("id").getAsString(),
+                            jsonObject.get("nickname").getAsString(),
+                            jsonObject.get("profileImageUrl").getAsString()
+                    )
+            );
         }
 
         return names;

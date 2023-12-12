@@ -19,8 +19,10 @@ import org.naemansan.courseapi.domain.CourseTag;
 import org.naemansan.courseapi.domain.Spot;
 import org.naemansan.courseapi.dto.persistent.UserNamePersistent;
 import org.naemansan.courseapi.dto.persistent.SpotPersistent;
+import org.naemansan.courseapi.dto.request.SpotDto;
 import org.naemansan.courseapi.dto.response.CourseDetailDto;
 import org.naemansan.courseapi.dto.response.CourseListDto;
+import org.naemansan.courseapi.dto.type.EState;
 import org.naemansan.courseapi.utility.CourseUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -29,17 +31,15 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
 public class CourseService implements CourseUseCase {
+    private final TagServicePort tagServicePort;
     private final UserServicePort userServicePort;
     private final NaverMapServicePort naverMapServicePort;
-    private final TagServicePort tagServicePort;
+    private final ImageServicePort imageServicePort;
 
     private final CourseRepositoryPort courseRepositoryPort;
     private final CourseTagRepositoryPort courseTagRepositoryPort;
@@ -47,9 +47,10 @@ public class CourseService implements CourseUseCase {
     private final LikeRepositoryPort likeRepositoryPort;
     private final MomentRepositoryPort momentRepositoryPort;
 
+
     @Override
     @Transactional
-    public CourseDetailDto createCourse(CreateCourseCommand command) {
+    public Map<String, Object> createCourse(CreateCourseCommand command) {
         // User 확인
         UserNamePersistent userNamePersistent = userServicePort.findUserName(command.getUserId());
 
@@ -70,6 +71,18 @@ public class CourseService implements CourseUseCase {
         courseTagRepositoryPort.createCourseTags(command.getTagIds(), course);
 
         // Image 저장
+        List<String> preSignedUrls = new ArrayList<>();
+        List<String> imageUrls = new ArrayList<>();
+        for (SpotDto spot : command.getSpots()) {
+            if (spot.imageState().isUsed()) {
+                Map<String, String> imageUrlsMap = imageServicePort.getUploadImageUrl(spot.imageState().type());
+                preSignedUrls.add(imageUrlsMap.get("preSignedUrl"));
+                imageUrls.add(imageUrlsMap.get("fileUrl"));
+            } else {
+                preSignedUrls.add(null);
+                imageUrls.add(null);
+            }
+        }
 
 
         // CourseSpot 생성
@@ -77,28 +90,16 @@ public class CourseService implements CourseUseCase {
                 command.getSpots().stream()
                         .map(spot -> SpotPersistent.fromDto(
                                 spot,
-                                "testtest",
+                                imageUrls.get(command.getSpots().indexOf(spot)),
                                 CourseUtil.location2Point(spot.location())))
                         .toList(),
                 course
         );
 
         // 반환
-        return CourseDetailDto.builder()
-                .id(course.getId())
-                .title(course.getTitle())
-                .content(course.getContent())
-                .startLocationName(course.getStartLocationName())
-                .locations(CourseUtil.multiPoint2Locations(course.getLocations()))
-                .tags(tagServicePort.findByTagIds(command.getTagIds()))
-                .distance(String.valueOf(Math.round(course.getDistance())))
-                .createdAt(course.getCreatedAt().toString())
-                .userId(userNamePersistent.uuid())
-                .userNickName(userNamePersistent.nickname())
-                .userProfileImageUrl(userNamePersistent.profileImageUrl())
-                .likeCount(0L)
-                .isLike(false)
-                .build();
+        return Map.of(
+                "preSignedUrls", preSignedUrls
+        );
     }
 
     @Override
@@ -111,12 +112,8 @@ public class CourseService implements CourseUseCase {
                 course.getUserId().toString());
 
         // tagName 조회
-        List<String> tagNames = tagServicePort.findByTagIds(
-                course.getTags().stream().map(CourseTag::getTagId).toList());
 
         Long likeCount = likeRepositoryPort.countByCourse(course);
-//        Boolean isLike = likeRepositoryPort.existsByCourseAndUserId(course, UUID.fromString(command.getUserId()));
-
 
         return CourseDetailDto.builder()
                 .id(course.getId())
@@ -124,14 +121,14 @@ public class CourseService implements CourseUseCase {
                 .content(course.getContent())
                 .startLocationName(course.getStartLocationName())
                 .locations(CourseUtil.multiPoint2Locations(course.getLocations()))
-                .tags(tagNames)
+                .tags(tagServicePort.findByTagIds(
+                        course.getTags().stream().map(CourseTag::getTagId).toList()))
                 .distance(String.valueOf(Math.round(course.getDistance())))
                 .createdAt(course.getCreatedAt().toString())
-                .userId(userNamePersistent.uuid())
+                .userId(userNamePersistent.id())
                 .userNickName(userNamePersistent.nickname())
                 .userProfileImageUrl(userNamePersistent.profileImageUrl())
                 .likeCount(likeCount)
-                .isLike(null)
                 .build();
     }
 
@@ -160,6 +157,7 @@ public class CourseService implements CourseUseCase {
                                     .title(course.getTitle())
                                     .startLocationName(course.getStartLocationName())
                                     .distance(String.valueOf(Math.round(course.getDistance())))
+                                    .locations(CourseUtil.multiPoint2Locations(course.getLocations()))
                                     .tags(tagServicePort.findByTagIds(
                                             course.getTags().stream().map(CourseTag::getTagId).toList()))
                                     .momentCount(momentCounts.getOrDefault(course.getId(), 0L))
@@ -188,6 +186,7 @@ public class CourseService implements CourseUseCase {
                                     .title(courses.get(dataForm.getId()).getTitle())
                                     .startLocationName(courses.get(dataForm.getId()).getStartLocationName())
                                     .distance(String.valueOf(Math.round(courses.get(dataForm.getId()).getDistance())))
+                                    .locations(CourseUtil.multiPoint2Locations(courses.get(dataForm.getId()).getLocations()))
                                     .tags(tagServicePort.findByTagIds(
                                             courses.get(dataForm.getId()).getTags().stream().map(CourseTag::getTagId).toList()))
                                     .momentCount(momentCounts.getOrDefault(dataForm.getId(), 0L))
@@ -233,6 +232,7 @@ public class CourseService implements CourseUseCase {
                                 .title(courses.get(radiusForm.getId()).getTitle())
                                 .startLocationName(courses.get(radiusForm.getId()).getStartLocationName())
                                 .distance(String.valueOf(Math.round(courses.get(radiusForm.getId()).getDistance())))
+                                .locations(CourseUtil.multiPoint2Locations(courses.get(radiusForm.getId()).getLocations()))
                                 .tags(tagServicePort.findByTagIds(
                                         courses.get(radiusForm.getId()).getTags().stream().map(CourseTag::getTagId).toList()))
                                 .momentCount(momentCounts.getOrDefault(radiusForm.getId(), 0L))
@@ -253,7 +253,7 @@ public class CourseService implements CourseUseCase {
         Course course = courseRepositoryPort.findCourseByIdAndUserId(command.getCourseId(), UUID.fromString(command.getUserId()));
 
         // 권한 확인
-        if (!Objects.equals(userNamePersistent.uuid(), course.getUserId().toString())) {
+        if (!Objects.equals(userNamePersistent.id(), course.getUserId().toString())) {
             throw new CommonException(ErrorCode.ACCESS_DENIED);
         }
 
@@ -295,14 +295,12 @@ public class CourseService implements CourseUseCase {
         Course course = courseRepositoryPort.findCourseByIdAndUserId(command.getCourseId(), UUID.fromString(command.getUserId()));
 
         // 권한 확인
-        if (!Objects.equals(userNamePersistent.uuid(), course.getUserId().toString())) {
+        if (!Objects.equals(userNamePersistent.id(), course.getUserId().toString())) {
             throw new CommonException(ErrorCode.ACCESS_DENIED);
         }
 
-        // 유사도 검사 로직 필요
-
         // Update
-        course.updateStatus(command.getIsEnrolled());
+        course.updateStatus(command.getIsEnrolled() ? EState.ENROLLED : EState.PERSONAL);
     }
 
     @Override

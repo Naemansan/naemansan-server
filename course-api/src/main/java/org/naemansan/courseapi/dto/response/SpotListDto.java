@@ -9,24 +9,19 @@ import org.naemansan.courseapi.dto.type.ECategory;
 
 @Builder
 public record SpotListDto(
-        @JsonProperty("title")
-        @Size(min = 1, max = 12)
+        @JsonProperty("name")
         String name,
 
-        @JsonProperty("content")
-        @Size(min = 1, max = 100)
+        @JsonProperty("description")
         String description,
 
         @JsonProperty("location")
-        @NotNull
         LocationDto location,
 
         @JsonProperty("category")
-        @NotNull
         ECategory category,
 
         @JsonProperty("thumbnailUrl")
-        @NotNull
         String thumbnailUrl
 ) {
 }

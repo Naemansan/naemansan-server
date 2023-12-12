@@ -2,11 +2,10 @@ package org.naemansan.common.dto.request;
 
 import jakarta.validation.constraints.NotNull;
 
-public record ImageState(
-        @NotNull
+public record SpotImageState(
         String type,
 
         @NotNull
-        Boolean isChanged
+        Boolean isUsed
 ) {
 }

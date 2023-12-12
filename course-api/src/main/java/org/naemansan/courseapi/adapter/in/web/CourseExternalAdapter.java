@@ -82,12 +82,12 @@ public class CourseExternalAdapter {
             @PathVariable("courseId") Long courseId,
             @RequestBody @Valid CourseUpdateDto requestDto
     ) {
-//        String uuid = "625ad265-cc31-44fd-b783-e8cd047b6903";
+//        String id = "625ad265-cc31-44fd-b783-e8cd047b6903";
 //        courseUseCase.updateCourse(UpdateCourseCommand.of(
-//                uuid,
+//                id,
 //                courseId,
-//                requestDto.title(),
-//                requestDto.content(),
+//                requestDto.name(),
+//                requestDto.description(),
 //                requestDto.tagIds(),
 //                requestDto.spots()));
 

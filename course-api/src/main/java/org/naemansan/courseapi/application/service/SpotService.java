@@ -29,8 +29,8 @@ public class SpotService implements SpotUseCase {
 
         return spotRepositoryPort.findByCourse(course).stream()
                 .map(spot -> SpotListDto.builder()
-                        .name(spot.getTitle())
-                        .description(spot.getContent())
+                        .name(spot.getName())
+                        .description(spot.getDescription())
                         .location(CourseUtil.point2Location(spot.getLocation()))
                         .category(spot.getCategory())
                         .thumbnailUrl(spot.getThumbnailUrl()).build())

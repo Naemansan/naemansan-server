@@ -8,6 +8,7 @@ import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import org.locationtech.jts.geom.MultiPoint;
+import org.naemansan.courseapi.dto.type.EState;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -17,8 +18,8 @@ import java.util.UUID;
 @Getter
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 @Table(name = "courses")
-@SQLDelete(sql = "UPDATE courses SET is_deleted = true WHERE id = ?")
-@Where(clause = "is_deleted = false")
+@SQLDelete(sql = "UPDATE courses SET state = 'DELETED' WHERE id = ?")
+@Where(clause = "state != 'DELETED' AND state != 'IN_PROGRESS'")
 @DynamicUpdate
 public class Course {
     @Id
@@ -41,26 +42,25 @@ public class Course {
     @Column(name = "distance", nullable = false, updatable = false)
     private Double distance;
 
-    @Column(name = "user_id", nullable = false, updatable = false)
-    private UUID userId;
-
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDate createdAt;
 
-    @Column(name = "is_enrolled", nullable = false)
-    private Boolean isEnrolled;
+    @Column(name = "state", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private EState state;
 
-    @Column(name = "is_deleted", nullable = false)
-    private Boolean isDeleted;
+    /* Relation Parent Column */
+    @Column(name = "user_id", nullable = false, updatable = false)
+    private UUID userId;
 
     /* Relation Child Column */
-    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "course", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     private List<CourseTag> tags;
 
-    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "course", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     private List<Spot> spots;
 
-    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "course", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     private List<Moment> moments;
 
     @Builder
@@ -75,8 +75,7 @@ public class Course {
         this.distance = distance;
         this.userId = userId;
         this.createdAt = LocalDate.now();
-        this.isEnrolled = false;
-        this.isDeleted = false;
+        this.state = EState.PERSONAL;
     }
 
     public void update(String title, String content) {
@@ -84,7 +83,7 @@ public class Course {
         this.content = content;
     }
 
-    public void updateStatus(Boolean isEnrolled) {
-        this.isEnrolled = isEnrolled;
+    public void updateStatus(EState state) {
+        this.state = state;
     }
 }

@@ -1,5 +1,9 @@
 package org.naemansan.courseapi.utility;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.Headers;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import lombok.RequiredArgsConstructor;
@@ -17,11 +21,17 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import java.net.URL;
 import java.time.LocalTime;
+import java.util.Date;
+import java.util.Map;
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
 public class ExternalClientUtil {
+    private final AmazonS3 s3Client;
+
     @Value("${naver-api.map.url}")
     private String NAVER_MAP_URL;
 
@@ -36,6 +46,12 @@ public class ExternalClientUtil {
 
     @Value("${naver-api.map.client-secret}")
     private String CLIENT_SECRET;
+
+    @Value("${cloud.aws.s3.bucket}")
+    private String BUCKET_PATH;
+
+    @Value("${cloud.aws.s3.url}")
+    private String CLOUD_URL;
 
     private final RestTemplate restTemplate = new RestTemplate();
     private final Gson gson = new Gson();
@@ -142,5 +158,39 @@ public class ExternalClientUtil {
             }
             default -> throw new CommonException(ErrorCode.BAD_GATEWAY);
         };
+    }
+
+    public Map<String, String> getPreSignedUrl(String dirName, String fileType) {
+        String filePath = String.format("%s/%s.%s", dirName, UUID.randomUUID(), fileType);
+
+        GeneratePresignedUrlRequest urlRequest = getGeneratePreSignedUrlRequest(BUCKET_PATH, filePath, fileType);
+        URL url = s3Client.generatePresignedUrl(urlRequest);
+        return Map.of(
+                "preSignedUrl", url.toString(),
+                "fileUrl", String.format("%s/%s", CLOUD_URL, filePath)
+        );
+    }
+
+    private GeneratePresignedUrlRequest getGeneratePreSignedUrlRequest(String bucket, String filePath, String fileType) {
+        GeneratePresignedUrlRequest generatePresignedUrlRequest =
+                new GeneratePresignedUrlRequest(bucket, filePath)
+                        .withMethod(com.amazonaws.HttpMethod.PUT)
+                        .withExpiration(getPreSignedUrlExpiration());
+
+        // ACL을 public-read로 지정
+        generatePresignedUrlRequest.addRequestParameter(
+                Headers.S3_CANNED_ACL,
+                CannedAccessControlList.PublicRead.toString()
+        );
+
+        return generatePresignedUrlRequest;
+    }
+
+    private Date getPreSignedUrlExpiration() {
+        Date expiration = new Date();
+        long expTimeMillis = expiration.getTime();
+        expTimeMillis += 1000 * 60 * 2;
+        expiration.setTime(expTimeMillis);
+        return expiration;
     }
 }

@@ -7,6 +7,7 @@ import org.naemansan.courseapi.dto.persistent.UserNamePersistent;
 import org.naemansan.courseapi.utility.InternalClientUtil;
 
 import java.util.List;
+import java.util.Map;
 
 @WebAdapter
 @RequiredArgsConstructor
@@ -14,7 +15,7 @@ public class UserServiceAdapter implements UserServicePort {
     private final InternalClientUtil internalClientUtil;
 
     @Override
-    public List<UserNamePersistent> findUserNames(List<String> userIds) {
+    public Map<String, UserNamePersistent> findUserNames(List<String> userIds) {
         return internalClientUtil.getUserNames(userIds);
     }
 

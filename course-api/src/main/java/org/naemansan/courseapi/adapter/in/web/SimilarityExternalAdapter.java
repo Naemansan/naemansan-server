@@ -26,6 +26,8 @@ public class SimilarityExternalAdapter {
     ) {
         String uuid = "625ad265-cc31-44fd-b783-e8cd047b6903";
 
+        System.out.println(isPersonal);
+
         if (isPersonal) {
             return ResponseDto.ok(similarityUseCase.findSimilarPersonalCourses(
                     ReadSimilarPersonalCoursesCommand.builder()

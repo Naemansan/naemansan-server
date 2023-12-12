@@ -9,7 +9,7 @@ public record MomentDto(
         @NotNull
         Long courseId,
 
-        @JsonProperty("content")
+        @JsonProperty("description")
         @Size(min = 1, max = 300)
         String content
 ) {

@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.naemansan.common.SelfValidating;
-import org.naemansan.common.dto.request.ImageState;
+import org.naemansan.common.dto.request.ProfileImageState;
 
 import java.util.List;
 
@@ -32,7 +32,7 @@ public class UpdateUserCommand extends SelfValidating<UpdateUserCommand> {
     private final List<Long> deletedTagIds;
 
     @NotNull
-    private final ImageState imageState;
+    private final ProfileImageState imageState;
 
     @Builder
     private UpdateUserCommand(
@@ -41,7 +41,7 @@ public class UpdateUserCommand extends SelfValidating<UpdateUserCommand> {
             String introduction,
             List<Long> createdTagIds,
             List<Long> deletedTagIds,
-            ImageState imageState) {
+            ProfileImageState imageState) {
         this.id = id;
         this.nickname = nickname;
         this.introduction = introduction;
