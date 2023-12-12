@@ -26,8 +26,8 @@ public class UserTagPersistenceAdapter implements UserTagRepositoryPort {
     }
 
     @Override
-    public void deleteUserTags(List<UserTag> userTags) {
-        userTagRepository.deleteAll(userTags);
+    public void deleteUserTags(List<Long> tagIds, User user) {
+        userTagRepository.deleteByTagIdsAndUser(tagIds, user);
         userTagRepository.flush();
     }
 }

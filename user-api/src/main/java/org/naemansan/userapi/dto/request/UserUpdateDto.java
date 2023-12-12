@@ -3,6 +3,7 @@ package org.naemansan.userapi.dto.request;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import org.naemansan.common.dto.request.ImageState;
 
 import java.util.List;
 
@@ -15,8 +16,16 @@ public record UserUpdateDto(
         @Size(min = 1, max = 100)
         String introduction,
 
-        @JsonProperty("tags")
+        @JsonProperty("createdTagIds")
         @NotNull
-        List<Long> tags
+        List<Long> createdTagIds,
+
+        @JsonProperty("deletedTagIds")
+        @NotNull
+        List<Long> deletedTagIds,
+
+        @JsonProperty("imageState")
+        @NotNull
+        ImageState imageState
 ) {
 }

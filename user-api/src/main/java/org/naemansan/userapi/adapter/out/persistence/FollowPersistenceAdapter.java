@@ -11,23 +11,21 @@ import org.naemansan.common.annotaion.PersistenceAdapter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
-
 @PersistenceAdapter
 @RequiredArgsConstructor
 public class FollowPersistenceAdapter implements FollowRepositoryPort {
     private final FollowRepository followRepository;
 
     @Override
-    public void createFollow(User following, User followed) {
-        followRepository.findByFollowingAndFollowed(following, followed)
+    public void createFollow(User following, User follower) {
+        followRepository.findByFollowingAndFollower(following, follower)
                 .ifPresent(follow -> {
                     throw new CommonException(ErrorCode.DUPLICATED_RESOURCE);
                 });
 
         followRepository.save(Follow.builder()
                 .following(following)
-                .followed(followed).build());
+                .follower(follower).build());
     }
 
     @Override
@@ -36,8 +34,18 @@ public class FollowPersistenceAdapter implements FollowRepositoryPort {
     }
 
     @Override
+    public Long countFollowingByUser(User user) {
+        return followRepository.countByFollowing(user);
+    }
+
+    @Override
+    public Long countFollowerByUser(User user) {
+        return followRepository.countByFollower(user);
+    }
+
+    @Override
     public Follow findByFollowingAndFollower(User following, User follower) {
-        return followRepository.findByFollowingAndFollowed(following, follower)
+        return followRepository.findByFollowingAndFollower(following, follower)
                 .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_RESOURCE));
     }
 
@@ -48,6 +56,6 @@ public class FollowPersistenceAdapter implements FollowRepositoryPort {
 
     @Override
     public Page<Follow> findFollowerByUser(User user, Pageable pageable) {
-        return followRepository.findByFollowed(user, pageable);
+        return followRepository.findByFollower(user, pageable);
     }
 }

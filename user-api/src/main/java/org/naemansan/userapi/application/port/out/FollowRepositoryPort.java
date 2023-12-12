@@ -12,6 +12,10 @@ public interface FollowRepositoryPort {
 
     void deleteFollow(Follow follow);
 
+    Long countFollowingByUser(User user);
+
+    Long countFollowerByUser(User user);
+
     Follow findByFollowingAndFollower(User following, User follower);
 
     Page<Follow> findFollowingByUser(User user, Pageable pageable);

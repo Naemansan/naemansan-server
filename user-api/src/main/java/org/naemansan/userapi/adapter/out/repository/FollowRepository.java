@@ -8,16 +8,19 @@ import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface FollowRepository extends JpaRepository<Follow, Long> {
-    Optional<Follow> findByFollowingAndFollowed(User following, User followed);
+    Optional<Follow> findByFollowingAndFollower(User following, User followed);
 
-    @EntityGraph(attributePaths = {"followed"})
+    @EntityGraph(attributePaths = {"follower"})
     Page<Follow> findByFollowing(User following, Pageable pageable);
 
     @EntityGraph(attributePaths = {"following"})
-    Page<Follow> findByFollowed(User followed, Pageable pageable);
+    Page<Follow> findByFollower(User followed, Pageable pageable);
+
+    Long countByFollowing(User user);
+
+    Long countByFollower(User user);
 }

@@ -5,7 +5,8 @@ import org.naemansan.userapi.application.port.out.ImageServicePort;
 import org.naemansan.userapi.utility.ImageUtil;
 import org.naemansan.common.annotaion.WebAdapter;
 import org.naemansan.common.constant.Constants;
-import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Map;
 
 @WebAdapter
 @RequiredArgsConstructor
@@ -13,7 +14,7 @@ public class ImageExternalAdapter implements ImageServicePort {
     private final ImageUtil imageUtil;
 
     @Override
-    public String uploadImage(MultipartFile file) {
-        return imageUtil.uploadImage(file, Constants.PROFILE_PREFIX);
+    public Map<String, String> getUploadImageUrl(String typeName) {
+        return imageUtil.getPreSignedUrl(Constants.PROFILE_PREFIX, typeName);
     }
 }

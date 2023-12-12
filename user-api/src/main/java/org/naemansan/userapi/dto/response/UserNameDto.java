@@ -5,8 +5,8 @@ import lombok.Builder;
 
 @Builder
 public record UserNameDto(
-        @JsonProperty("uuid")
-        String uuid,
+        @JsonProperty("id")
+        String id,
         @JsonProperty("nickname")
         String nickname,
         @JsonProperty("profileImageUrl")

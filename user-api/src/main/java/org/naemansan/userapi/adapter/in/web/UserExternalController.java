@@ -18,7 +18,6 @@ import org.naemansan.userapi.dto.type.ERole;
 import org.naemansan.common.annotaion.WebAdapter;
 import org.naemansan.common.dto.response.ResponseDto;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -40,7 +39,7 @@ public class UserExternalController {
                 .role(ERole.USER)
                 .build());
         return UserDetailDto.builder()
-                .uuid(user.getUuid().toString())
+                .id(user.getId().toString())
                 .nickname(user.getNickname())
                 .introduction(user.getIntroduction())
                 .profileImageUrl(user.getProfileImageUrl())
@@ -51,30 +50,30 @@ public class UserExternalController {
     @GetMapping("")
     public ResponseDto<?> readUser() {
         String uuid = "625ad265-cc31-44fd-b783-e8cd047b6903";
-        return ResponseDto.ok(userUseCase.findUserDetailByUuid(ReadUserQuery.of(uuid)));
+        return ResponseDto.ok(userUseCase.findUserDetailById(ReadUserQuery.of(uuid)));
     }
 
     @GetMapping("/{userId}")
     public ResponseDto<?> readAntherUser(
             @PathVariable("userId") String userUuid
     ) {
-        return ResponseDto.ok(userUseCase.findUserDetailByUuid(ReadUserQuery.of(userUuid)));
+        return ResponseDto.ok(userUseCase.findUserDetailById(ReadUserQuery.of(userUuid)));
     }
 
     @PutMapping("")
     public ResponseDto<?> updateUser(
-            @RequestPart(value = "body", required = false) @Valid UserUpdateDto requestDto,
-            @RequestPart(value = "image", required = false) MultipartFile imgFile
+            @RequestBody @Valid UserUpdateDto requestDto
     ) {
-        userUseCase.updateUserByUuid(UpdateUserCommand.of(
-                "625ad265-cc31-44fd-b783-e8cd047b6903",
-                requestDto.nickname(),
-                requestDto.introduction(),
-                requestDto.tags(),
-                imgFile
-        ));
+        String userId = "625ad265-cc31-44fd-b783-e8cd047b6903";
 
-        return ResponseDto.ok("updateUserInfo");
+        return ResponseDto.ok(userUseCase.updateUserById(UpdateUserCommand.builder()
+                .id(userId)
+                .nickname(requestDto.nickname())
+                .introduction(requestDto.introduction())
+                .createdTagIds(requestDto.createdTagIds())
+                .deletedTagIds(requestDto.deletedTagIds())
+                .imageState(requestDto.imageState())
+                .build()));
     }
 
     @GetMapping("/followings")

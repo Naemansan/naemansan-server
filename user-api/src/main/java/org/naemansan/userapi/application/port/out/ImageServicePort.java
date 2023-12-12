@@ -1,7 +1,8 @@
 package org.naemansan.userapi.application.port.out;
 
-import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Map;
 
 public interface ImageServicePort {
-    String uploadImage(MultipartFile file);
+    Map<String, String> getUploadImageUrl(String typeName);
 }

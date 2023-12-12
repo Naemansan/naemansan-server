@@ -24,8 +24,8 @@ public class User {
     @Id
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-    @Column(name = "uuid", nullable = false, updatable = false, unique = true)
-    private UUID uuid;
+    @Column(name = "id", nullable = false, updatable = false, unique = true)
+    private UUID id;
 
     @Column(name = "serial_id", nullable = false, unique = true)
     private String serialId;
@@ -61,7 +61,7 @@ public class User {
     @OneToMany(mappedBy = "following", cascade = CascadeType.ALL)
     private List<Follow> followings = new ArrayList<>();
 
-    @OneToMany(mappedBy = "followed", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "follower", cascade = CascadeType.ALL)
     private List<Follow> followers = new ArrayList<>();
 
     @Builder
@@ -71,7 +71,6 @@ public class User {
         this.provider = provider;
         this.role = role;
         this.createdAt = LocalDate.now();
-        this.profileImageUrl = "default_image_url";
     }
 
     public void register(String nickname, String introduction) {

@@ -20,13 +20,13 @@ public class Follow {
     @ManyToOne(fetch = FetchType.LAZY)
     private User following;
 
-    @JoinColumn(name = "followed_id", nullable = false)
+    @JoinColumn(name = "follower_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
-    private User followed;
+    private User follower;
 
     @Builder
-    public Follow(User following, User followed) {
+    public Follow(User following, User follower) {
         this.following = following;
-        this.followed = followed;
+        this.follower = follower;
     }
 }

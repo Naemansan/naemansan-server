@@ -6,11 +6,9 @@ import org.naemansan.userapi.domain.User;
 import java.util.List;
 
 public interface UserRepositoryPort {
-    User findUserByUuid(String uuid);
+    User findUserById(String userId);
 
-    User findUserDetailByUuid(String uuid);
+    UserRepository.UserName findUserNameById(String userId);
 
-    UserRepository.UserName findUserNameByUuid(String uuid);
-
-    List<UserRepository.UserName> findUserNamesByUuids(List<String> uuids);
+    List<UserRepository.UserName> findUserNamesByIds(List<String> userIds);
 }
