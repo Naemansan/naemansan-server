@@ -8,7 +8,6 @@ import org.naemansan.userapi.adapter.out.repository.UserRepository;
 import org.naemansan.userapi.application.port.in.command.UpdateUserCommand;
 import org.naemansan.userapi.application.port.in.query.ReadUserDependenceQuery;
 import org.naemansan.userapi.application.port.in.query.ReadUserQuery;
-import org.naemansan.userapi.application.port.in.usecase.CourseUseCase;
 import org.naemansan.userapi.application.port.in.usecase.FollowUseCase;
 import org.naemansan.userapi.application.port.in.usecase.UserUseCase;
 import org.naemansan.userapi.domain.User;
@@ -111,14 +110,15 @@ public class UserExternalController {
     }
 
     @GetMapping("/courses")
-    public ResponseDto<?> readCourses(
+    public ResponseDto<?> getCourseList(
+            @RequestParam(value = "filter") String filter,
             @RequestParam(value = "page") Integer page,
-            @RequestParam(value = "size") Integer size
-    ) {
+            @RequestParam(value = "size") Integer size) {
         if (page < 0 || size < 0) {
             throw new CommonException(ErrorCode.INVALID_PARAMETER);
         }
         String userId = "625ad265-cc31-44fd-b783-e8cd047b6903";
-        return ResponseDto.ok();
+
+        return ResponseDto.ok(userUseCase.getCourseList(filter, page, size));
     }
 }

@@ -1,13 +1,7 @@
 package org.naemansan.userapi.application.port.out;
 
-import org.naemansan.userapi.dto.response.CourseListDto;
-import org.springframework.data.domain.Page;
-
-import java.util.List;
+import java.util.Map;
 
 public interface CourseServicePort {
-    List<CourseListDto> findByUserIdAndIsDeleted();
-
-    List<CourseListDto> findByUserIdAndIsEnrolledAndIsDeleted();
-
+    Map<String, Object> getCourseList(String filter, Integer page, Integer size);
 }

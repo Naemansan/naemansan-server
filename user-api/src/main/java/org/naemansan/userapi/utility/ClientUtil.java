@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import lombok.NoArgsConstructor;
+import org.naemansan.userapi.dto.response.CourseListDto;
+import org.naemansan.userapi.dto.response.LocationDto;
 import org.naemansan.userapi.dto.response.TagDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -15,7 +17,9 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Component
 @NoArgsConstructor
@@ -75,6 +79,45 @@ public class ClientUtil {
             }
 
             return tagDtos;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Map<String, Object> getCourseList(String filter, Integer page, Integer size) {
+
+        headers.clear();
+        headers.add("Content-Type", "application/json");
+
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
+
+        String url = String.format("%s/courses", COURSE_API_URL);
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(url).append("?filter=").append(filter + "&page=" + page + "&size=" + size);
+
+        url = sb.toString();
+
+        Map<String, Object> names = new HashMap<>();
+
+        try {
+            JsonArray jsonArray = gson.fromJson(
+                    restTemplate.exchange(
+                            url,
+                            HttpMethod.GET,
+                            request,
+                            String.class).getBody(),
+                    JsonObject.class).getAsJsonArray("data");
+
+            for (int i = 0; i < jsonArray.size(); i++) {
+                JsonObject jsonObject = jsonArray.get(i).getAsJsonObject();
+                names.put(String.valueOf(jsonObject.get("courses")),
+                        jsonObject.get("pageInfo")
+                );
+            }
+
+            return names;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

@@ -17,4 +17,6 @@ public interface UserUseCase {
     UserNameDto findUserNameById(String uuid);
 
     List<UserNameDto> findUserNamesByIds(List<String> uuids);
+
+    Map<String, Object> getCourseList(String filter, Integer page, Integer size);
 }

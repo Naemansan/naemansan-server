@@ -12,6 +12,7 @@ import org.naemansan.courseapi.application.port.in.command.UpdateCourseCommand;
 import org.naemansan.courseapi.application.port.in.command.UpdateCourseStatusCommand;
 import org.naemansan.courseapi.application.port.in.query.ReadCourseCommand;
 import org.naemansan.courseapi.application.port.in.query.ReadCoursesCommand;
+import org.naemansan.courseapi.application.port.in.query.ReadCoursesForUserCommand;
 import org.naemansan.courseapi.application.port.in.usecase.CourseUseCase;
 import org.naemansan.courseapi.application.port.out.*;
 import org.naemansan.courseapi.domain.Course;
@@ -315,4 +316,52 @@ public class CourseService implements CourseUseCase {
         // Delete
         courseRepositoryPort.deleteCourse(course);
     }
+
+    @Override
+    public Map<String, Object> findCoursesByUserId(ReadCoursesForUserCommand command) {
+        // Pageable 생성
+        Pageable pageable = PageRequest.of(
+                command.getPage(),
+                command.getSize(),
+                Sort.by("radius"));
+
+        Page<Long> locationForms = null;
+
+        // filter 에 따라 분기 / // Course 조회
+        if (command.getFilter().equals("PUBLIC")) {
+            locationForms = courseRepositoryPort.findCoursesByUserIdAndIsEnrolledAndIsDeleted(UUID.fromString(command.getUserId()), Boolean.TRUE, pageable);
+        } else if (command.getFilter().equals("PRIVATE")) {
+            locationForms = courseRepositoryPort.findCoursesByUserIdAndIsEnrolledAndIsDeleted(UUID.fromString(command.getUserId()), Boolean.FALSE, pageable);
+        } else {
+            locationForms = courseRepositoryPort.findCoursesByUserIdAndIsDeleted(UUID.fromString(command.getUserId()), pageable);
+        }
+
+
+        Map<Long, Course> courses = courseRepositoryPort.findCoursesByIds(
+                locationForms.toList());
+
+        // Like, Moment Count 조회
+        Map<Long, Long> likeCounts = likeRepositoryPort.countByCourses(courses.values().stream().toList());
+        Map<Long, Long> momentCounts = momentRepositoryPort.countByCourses(courses.values().stream().toList());
+
+        // 반환
+        return Map.of(
+                "courses", locationForms.stream()
+                        .map(radiusForm -> CourseListDto.builder()
+                                .id(radiusForm)
+                                .title(courses.get(radiusForm).getTitle())
+                                .startLocationName(courses.get(radiusForm).getStartLocationName())
+                                .distance(String.valueOf(Math.round(courses.get(radiusForm).getDistance())))
+                                .locations(CourseUtil.multiPoint2Locations(courses.get(radiusForm).getLocations()))
+                                .tags(tagServicePort.findByTagIds(
+                                        courses.get(radiusForm).getTags().stream().map(CourseTag::getTagId).toList()))
+                                .momentCount(momentCounts.getOrDefault(radiusForm, 0L))
+                                .likeCount(likeCounts.getOrDefault(radiusForm, 0L))
+                                .build())
+                        .toList(),
+                "pageInfo", PageInfo.fromPage(locationForms)
+        );
+    }
+
+
 }

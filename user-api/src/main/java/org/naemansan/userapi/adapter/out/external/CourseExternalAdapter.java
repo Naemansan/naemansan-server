@@ -7,6 +7,7 @@ import org.naemansan.userapi.dto.response.CourseListDto;
 import org.naemansan.userapi.utility.ClientUtil;
 
 import java.util.List;
+import java.util.Map;
 
 @WebAdapter
 @RequiredArgsConstructor
@@ -14,14 +15,7 @@ public class CourseExternalAdapter implements CourseServicePort {
     private final ClientUtil clientUtil;
 
     @Override
-    public List<CourseListDto> findByUserIdAndIsDeleted() {
-
+    public Map<String, Object> getCourseList(String filter, Integer page, Integer size) {
+        return clientUtil.getCourseList(filter, page, size);
     }
-
-    @Override
-    public List<CourseListDto> findByUserIdAndIsEnrolledAndIsDeleted() {
-
-    }
-
-
 }

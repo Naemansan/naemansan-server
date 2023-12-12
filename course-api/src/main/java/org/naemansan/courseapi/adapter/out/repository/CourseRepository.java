@@ -68,14 +68,30 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
             @Param("location") Point location,
             @Param("state") EState state);
 
+    @Query(value = "SELECT c.id AS id FROM courses c join course_tags ct on c.id = ct.course_id "
+            + "WHERE c.user_id = :userId AND c.is_deleted = false",
+            countQuery = "SELECT c.id AS id FROM courses c join course_tags ct on c.id = ct.course_id "
+                    + "WHERE c.user_id = :userId AND c.is_deleted = false",
+            nativeQuery = true)
+    Page<Long> findByUserIdAndIsDeleted(@Param("userId") UUID userId, Pageable paging);
+
+    @Query(value = "SELECT c.id AS id FROM courses c join course_tags ct on c.id = ct.course_id "
+            + "WHERE c.user_id = :userId AND c.is_deleted = false AND c.is_enrolled = :isEnrolled",
+            countQuery = "SELECT c.id AS id FROM courses c join course_tags ct on c.id = ct.course_id "
+                    + "WHERE c.user_id = :userId AND c.is_deleted = false AND c.is_enrolled = :isEnrolled",
+            nativeQuery = true)
+    Page<Long> findByUserIdAndIsEnrolledAndIsDeleted(@Param("userId") UUID userId, @Param("isEnrolled") Boolean isEnrolled, Pageable paging);
+
     interface RadiusForm {
         Long getId();
+
         Double getRadius();
     }
 
 
     interface DateForm {
         Long getId();
+
         LocalDate getCreatedAt();
     }
 }

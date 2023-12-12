@@ -96,4 +96,14 @@ public class CoursePersistentAdapter implements CourseRepositoryPort {
         else
             return courseRepository.findNearCoursesByUserIdAndLocationAndState(userId, location, state);
     }
+
+    @Override
+    public Page<Long> findCoursesByUserIdAndIsDeleted(UUID userId, Pageable pageable) {
+        return courseRepository.findByUserIdAndIsDeleted(userId, pageable);
+    }
+
+    @Override
+    public Page<Long> findCoursesByUserIdAndIsEnrolledAndIsDeleted(UUID userId, Boolean isEnrolled, Pageable pageable) {
+        return courseRepository.findByUserIdAndIsEnrolledAndIsDeleted(userId, isEnrolled, pageable);
+    }
 }
