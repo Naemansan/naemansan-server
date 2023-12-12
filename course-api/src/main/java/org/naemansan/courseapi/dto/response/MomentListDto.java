@@ -16,10 +16,10 @@ public record MomentListDto(
         @JsonProperty("courseTitle")
         String courseTitle,
 
-        @JsonProperty("nickname")
+        @JsonProperty("userNickname")
         String nickname,
 
-        @JsonProperty("description")
+        @JsonProperty("content")
         String content,
 
         @JsonProperty("createdAt")

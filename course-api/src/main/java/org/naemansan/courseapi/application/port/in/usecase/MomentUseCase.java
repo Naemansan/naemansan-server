@@ -5,7 +5,6 @@ import org.naemansan.courseapi.application.port.in.query.ReadCourseDependenceCom
 import org.naemansan.courseapi.application.port.in.query.ReadMomentsCommand;
 import org.naemansan.courseapi.dto.response.MomentListDto;
 
-import java.util.List;
 import java.util.Map;
 
 public interface MomentUseCase {

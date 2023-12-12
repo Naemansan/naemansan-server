@@ -54,13 +54,13 @@ public class Course {
     private UUID userId;
 
     /* Relation Child Column */
-    @OneToMany(mappedBy = "course", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<CourseTag> tags;
 
-    @OneToMany(mappedBy = "course", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Spot> spots;
 
-    @OneToMany(mappedBy = "course", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Moment> moments;
 
     @Builder

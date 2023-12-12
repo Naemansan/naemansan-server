@@ -25,11 +25,4 @@ public enum EWeather {
     public String toString() {
         return value;
     }
-
-    public static EWeather fromString(String value) {
-        return Arrays.stream(EWeather.values())
-                .filter(weather -> weather.value.equals(value))
-                .findFirst()
-                .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_RESOURCE));
-    }
 }
