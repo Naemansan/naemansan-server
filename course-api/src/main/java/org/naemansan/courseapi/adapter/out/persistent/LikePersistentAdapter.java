@@ -43,13 +43,13 @@ public class LikePersistentAdapter implements LikeRepositoryPort {
     }
 
     @Override
-    public Boolean existsByCourseAndUserId(Course course, UUID userId) {
-        return likeRepository.existsByCourseAndUserId(course, userId);
+    public Boolean existsByUserIdAndCourse(UUID userId, Course course) {
+        return likeRepository.existsByUserIdAndCourse(userId, course);
     }
 
     @Override
-    public Map<Long, Boolean> existsByCoursesAndUserId(List<Course> course, UUID userId) {
-        List<LikeRepository.LikeExists> likeExists = likeRepository.existsByCoursesAndUserId(course, userId);
+    public Map<Long, Boolean> existsByUserIdAndCourses(UUID userId, List<Course> courses) {
+        List<LikeRepository.LikeExists> likeExists = likeRepository.existsByUserIdAndCourses(userId, courses);
 
         Map<Long, Boolean> result = new java.util.HashMap<>();
 

@@ -24,7 +24,7 @@ public class MomentExternalAdapter {
             @RequestBody @Valid MomentDto momentDto
     ) {
         String uuid = "625ad265-cc31-44fd-b783-e8cd047b6903";
-        return ResponseDto.ok(momentUseCase.createMoment(CreateMomentCommand.of(
+        return ResponseDto.created(momentUseCase.createMoment(CreateMomentCommand.of(
                 uuid,
                 momentDto.courseId(),
                 momentDto.content()
