@@ -17,7 +17,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Map;
 
 @Service
@@ -28,8 +27,8 @@ public class FollowService implements FollowUseCase {
 
     @Override
     public void createFollow(CreateFollowCommand command) {
-        User following = userRepositoryPort.findUserByUuid(command.getFollowingId());
-        User follower = userRepositoryPort.findUserByUuid(command.getFollowerId());
+        User following = userRepositoryPort.findUserById(command.getFollowingId());
+        User follower = userRepositoryPort.findUserById(command.getFollowerId());
 
         followRepositoryPort.createFollow(following, follower);
     }
@@ -37,8 +36,8 @@ public class FollowService implements FollowUseCase {
     @Override
     @Transactional
     public void deleteFollow(DeleteFollowCommand command) {
-        User following = userRepositoryPort.findUserByUuid(command.getFollowingId());
-        User follower = userRepositoryPort.findUserByUuid(command.getFollowerId());
+        User following = userRepositoryPort.findUserById(command.getFollowingId());
+        User follower = userRepositoryPort.findUserById(command.getFollowerId());
 
         Follow follow = followRepositoryPort.findByFollowingAndFollower(following, follower);
 
@@ -48,7 +47,7 @@ public class FollowService implements FollowUseCase {
     @Override
     public Map<String, Object> findFollowingByUserId(ReadUserDependenceQuery command) {
         // 유저 조회
-        User user = userRepositoryPort.findUserByUuid(command.getUserId());
+        User user = userRepositoryPort.findUserById(command.getUserId());
 
         // Following 조회
         Pageable pageable = PageRequest.of(command.getPage(), command.getSize());
@@ -59,10 +58,10 @@ public class FollowService implements FollowUseCase {
                 "pageInfo", PageInfo.fromPage(following),
                 "followings", following.getContent().stream()
                         .map(follow -> FollowListDto.builder()
-                                .userId(follow.getFollowed().getUuid().toString())
-                                .nickname(follow.getFollowed().getNickname())
-                                .introduction(follow.getFollowed().getIntroduction())
-                                .profileImageUrl(follow.getFollowed().getProfileImageUrl())
+                                .userId(follow.getFollower().getId().toString())
+                                .nickname(follow.getFollower().getNickname())
+                                .introduction(follow.getFollower().getIntroduction())
+                                .profileImageUrl(follow.getFollower().getProfileImageUrl())
                                 .build())
                         .toList()
         );
@@ -71,7 +70,7 @@ public class FollowService implements FollowUseCase {
     @Override
     public Map<String, Object> findFollowerByUserId(ReadUserDependenceQuery command) {
         // 유저 조회
-        User user = userRepositoryPort.findUserByUuid(command.getUserId());
+        User user = userRepositoryPort.findUserById(command.getUserId());
 
         // Follower 조회
         Pageable pageable = PageRequest.of(command.getPage(), command.getSize());
@@ -81,7 +80,7 @@ public class FollowService implements FollowUseCase {
                 "pageInfo", PageInfo.fromPage(Follower),
                 "followers", Follower.getContent().stream()
                         .map(follow -> FollowListDto.builder()
-                                .userId(follow.getFollowing().getUuid().toString())
+                                .userId(follow.getFollowing().getId().toString())
                                 .nickname(follow.getFollowing().getNickname())
                                 .introduction(follow.getFollowing().getIntroduction())
                                 .profileImageUrl(follow.getFollowing().getProfileImageUrl())

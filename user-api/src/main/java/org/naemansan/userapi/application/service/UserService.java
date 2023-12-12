@@ -15,7 +15,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -28,8 +30,8 @@ public class UserService implements UserUseCase {
     private final UserTagRepositoryPort userTagRepositoryPort;
 
     @Override
-    public UserDetailDto findUserDetailByUuid(ReadUserQuery command) {
-        User user = userRepositoryPort.findUserDetailByUuid(command.getUuid());
+    public UserDetailDto findUserDetailById(ReadUserQuery command) {
+        User user = userRepositoryPort.findUserById(command.getUuid());
 
         List<TagDto> tags = new ArrayList<>();
         if (user.getTags() != null && !user.getTags().isEmpty()) {
@@ -40,49 +42,66 @@ public class UserService implements UserUseCase {
         }
 
         return UserDetailDto.builder()
-                .uuid(user.getUuid().toString())
+                .id(user.getId().toString())
                 .nickname(user.getNickname())
                 .introduction(user.getIntroduction())
                 .profileImageUrl(user.getProfileImageUrl())
                 .tags(tags)
+                .followingCount(followRepositoryPort.countFollowingByUser(user))
+                .followerCount(followRepositoryPort.countFollowerByUser(user))
                 .build();
     }
 
     @Override
     @Transactional
-    public void updateUserByUuid(UpdateUserCommand command) {
+    public Map<String, Object> updateUserById(UpdateUserCommand command) {
         // User 조회
-        User user = userRepositoryPort.findUserDetailByUuid(command.getUuid());
+        User user = userRepositoryPort.findUserById(command.getId());
 
-        // 이미지 저장(구현 미완)
-        String profileImageUrl = imageServicePort.uploadImage(command.getProfileImage());
+        String profileImageUrl = null;
+        String preSignedUrl = null;
 
-        // Tag 삭제
-        userTagRepositoryPort.deleteUserTags(user.getTags());
+        // PreSignedUrl 생성
+        if (command.getImageState().isChanged()) {
+            Map<String, String> fileUrls = imageServicePort.getUploadImageUrl(command.getImageState().type());
+            preSignedUrl = fileUrls.get("preSignedUrl");
+            profileImageUrl = fileUrls.get("fileUrl");
+        }
 
-        // User Update And Save Tags
-        userTagRepositoryPort.saveUserTags(command.getTagIds(), user);
+        // UserTag Delete After Save
+        if (command.getDeletedTagIds() != null && !command.getDeletedTagIds().isEmpty())
+            userTagRepositoryPort.deleteUserTags(command.getDeletedTagIds(), user);
+
+        if (command.getCreatedTagIds() != null && !command.getCreatedTagIds().isEmpty())
+            userTagRepositoryPort.saveUserTags(command.getCreatedTagIds(), user);
+
         user.update(command.getNickname(), command.getIntroduction(), profileImageUrl);
+
+        Map<String, Object> result = new HashMap<>();
+
+        result.put("preSignedUrl", preSignedUrl);
+
+        return result;
     }
 
     @Override
-    public UserNameDto findUserNameByUuid(String uuid) {
-        UserRepository.UserName userName = userRepositoryPort.findUserNameByUuid(uuid);
+    public UserNameDto findUserNameById(String uuid) {
+        UserRepository.UserName userName = userRepositoryPort.findUserNameById(uuid);
 
         return UserNameDto.builder()
-                .uuid(userName.getUuid().toString())
+                .id(userName.getId().toString())
                 .nickname(userName.getNickname())
                 .profileImageUrl(userName.getProfileImageUrl())
                 .build();
     }
 
     @Override
-    public List<UserNameDto> findUserNamesByUuids(List<String> uuids) {
-        List<UserRepository.UserName> userNames = userRepositoryPort.findUserNamesByUuids(uuids);
+    public List<UserNameDto> findUserNamesByIds(List<String> uuids) {
+        List<UserRepository.UserName> userNames = userRepositoryPort.findUserNamesByIds(uuids);
 
         return userNames.stream()
                 .map(userName -> UserNameDto.builder()
-                        .uuid(userName.getUuid().toString())
+                        .id(userName.getId().toString())
                         .nickname(userName.getNickname())
                         .profileImageUrl(userName.getProfileImageUrl())
                         .build())

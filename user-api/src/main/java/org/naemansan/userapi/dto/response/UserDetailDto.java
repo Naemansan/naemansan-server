@@ -7,8 +7,8 @@ import java.util.List;
 
 @Builder
 public record UserDetailDto(
-        @JsonProperty("uuid")
-        String uuid,
+        @JsonProperty("id")
+        String id,
 
         @JsonProperty("nickname")
         String nickname,
@@ -16,10 +16,16 @@ public record UserDetailDto(
         @JsonProperty("introduction")
         String introduction,
 
-        @JsonProperty("profile_image_url")
+        @JsonProperty("profileImageUrl")
         String profileImageUrl,
 
         @JsonProperty("tags")
-        List<TagDto> tags
+        List<TagDto> tags,
+
+        @JsonProperty("followingCount")
+        Long followingCount,
+
+        @JsonProperty("followerCount")
+        Long followerCount
 ) {
 }

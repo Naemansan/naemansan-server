@@ -14,6 +14,6 @@ public class EmotionExternalAdapter implements EmotionServicePort {
 
     @Override
     public EEmotion analyzeContent(String content) {
-        return EEmotion.JOY;
+        return externalClientUtil.getEmotion(content);
     }
 }

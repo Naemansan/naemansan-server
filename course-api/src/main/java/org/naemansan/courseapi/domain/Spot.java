@@ -9,8 +9,6 @@ import org.hibernate.annotations.Where;
 import org.locationtech.jts.geom.Point;
 import org.naemansan.courseapi.dto.type.ECategory;
 
-import java.util.List;
-
 @Entity
 @Getter
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
@@ -24,16 +22,16 @@ public class Spot {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "title", nullable = false, updatable = false, length = 12)
-    private String title;
+    @Column(name = "name", nullable = false, updatable = false, length = 12)
+    private String name;
 
-    @Column(name = "content", nullable = false, updatable = false, length = 100)
-    private String content;
+    @Column(name = "description", nullable = false, updatable = false, length = 100)
+    private String description;
 
     @Column(name="location", columnDefinition = "POINT")
     private Point location;
 
-    @Column(name = "thumbnail_url", nullable = false, updatable = false)
+    @Column(name = "thumbnail_url", updatable = false)
     private String thumbnailUrl;
 
     @Column(name = "category", nullable = false, updatable = false)
@@ -49,10 +47,10 @@ public class Spot {
     private Course course;
 
     @Builder
-    public Spot(String title, String content, Point location, String thumbnail,
+    public Spot(String name, String description, Point location, String thumbnail,
                 Course course, ECategory category) {
-        this.title = title;
-        this.content = content;
+        this.name = name;
+        this.description = description;
         this.location = location;
         this.thumbnailUrl = thumbnail;
         this.course = course;

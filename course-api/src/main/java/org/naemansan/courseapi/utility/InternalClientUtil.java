@@ -6,7 +6,9 @@ import com.google.gson.JsonObject;
 import lombok.NoArgsConstructor;
 import org.naemansan.common.dto.type.ErrorCode;
 import org.naemansan.common.exception.CommonException;
+import org.naemansan.courseapi.dto.common.TagDto;
 import org.naemansan.courseapi.dto.persistent.UserNamePersistent;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -16,27 +18,26 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.List;
+import javax.swing.text.html.Option;
+import java.util.*;
 
 @Component
 @NoArgsConstructor
 public class InternalClientUtil {
+    @Value("${internal-service.auth-api}")
+    private String AUTH_API_URL;
+    @Value("${internal-service.user-api}")
+    private String COURSE_API_URL;
+    @Value("${internal-service.tag-api}")
+    private String TAG_API_URL;
+
     private final RestTemplate restTemplate = new RestTemplate();
     private final Gson gson = new Gson();
     private final HttpHeaders headers = new HttpHeaders();
 
-    public List<String> getTagNames(List<Long> tagIds) {
-        // Header 설정
-        headers.clear();
-        headers.add("Content-Type", "application/json");
-
-        // Body 설정
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        HttpEntity<MultiValueMap<String,String>> request = new HttpEntity<>(params, headers);
-
-        String url = "http://tag-api:8080/tags";
-
+    public List<TagDto> getTagNames(List<Long> tagIds) {
+        // 요청 URL 설정
+        String url = String.format("%s/tags", TAG_API_URL);
         if (tagIds != null) {
             StringBuilder sb = new StringBuilder();
             sb.append(url).append("?ids=");
@@ -52,6 +53,15 @@ public class InternalClientUtil {
             url = sb.toString();
         }
 
+        // Header 설정
+        headers.clear();
+        headers.add("Content-Type", "application/json; charset=utf-8");
+
+        // Body 설정
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        HttpEntity<MultiValueMap<String,String>> request = new HttpEntity<>(params, headers);
+
+        // 요청
         ResponseEntity<String> response = null;
         try {
             response = restTemplate.exchange(
@@ -64,29 +74,33 @@ public class InternalClientUtil {
         }
 
         // 후처리 후 반환
-        List<String> names = new ArrayList<>();
+        List<TagDto> tags = new ArrayList<>();
         JsonArray jsonArray = gson.fromJson(response.getBody(), JsonObject.class)
                 .getAsJsonArray("data");
 
         for (int i = 0; i < jsonArray.size(); i++) {
             JsonObject jsonObject = jsonArray.get(i).getAsJsonObject();
 
-            names.add(jsonObject.get("name").getAsString());
+            tags.add(TagDto.builder()
+                    .id(jsonObject.get("id").getAsLong())
+                    .name(jsonObject.get("name").getAsString())
+                    .build());
         }
 
-        return names;
+        return tags;
     }
 
     public UserNamePersistent getUserName(String uuid) {
+        // 요청 URL 설정
+        String url = String.format("%s/internal-users/%s/name", COURSE_API_URL, uuid);
+
         // Header 설정
         headers.clear();
-        headers.add("Content-Type", "application/json");
+        headers.add("Content-Type", "application/json; charset=utf-8");
 
         // Body 설정
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         HttpEntity<MultiValueMap<String,String>> request = new HttpEntity<>(params, headers);
-
-        String url = "http://user-api:8080/internal-users/" + uuid + "/name";
 
         // 요청
         ResponseEntity<String> response = null;
@@ -105,22 +119,15 @@ public class InternalClientUtil {
                 .getAsJsonObject("data");
 
         return UserNamePersistent.of(
-                jsonObject.get("uuid").getAsString(),
+                jsonObject.get("id").getAsString(),
                 jsonObject.get("nickname").getAsString(),
                 jsonObject.get("profileImageUrl").getAsString()
         );
     }
 
-    public List<UserNamePersistent> getUserNames(List<String> userIds) {
-        // Header 설정
-        headers.clear();
-        headers.add("Content-Type", "application/json");
-
-        // Body 설정
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        HttpEntity<MultiValueMap<String,String>> request = new HttpEntity<>(params, headers);
-
-        String url = "http://user-api:8080/internal-users/name";
+    public Map<String, UserNamePersistent> getUserNames(List<String> userIds) {
+        // 요청 URL 설정
+        String url = String.format("%s/internal-users/name", COURSE_API_URL);
 
         if (userIds != null) {
             StringBuilder sb = new StringBuilder();
@@ -137,6 +144,14 @@ public class InternalClientUtil {
             url = sb.toString();
         }
 
+        // Header 설정
+        headers.clear();
+        headers.add("Content-Type", "application/json; charset=utf-8");
+
+        // Body 설정
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        HttpEntity<MultiValueMap<String,String>> request = new HttpEntity<>(params, headers);
+
         // 요청
         ResponseEntity<String> response = null;
         try {
@@ -150,7 +165,7 @@ public class InternalClientUtil {
         }
 
         // 후처리 후 반환
-        List<UserNamePersistent> names = new ArrayList<>();
+        Map<String, UserNamePersistent> names = new HashMap<>();
 
         JsonArray jsonArray = gson.fromJson(response.getBody(), JsonObject.class)
                 .getAsJsonArray("data");
@@ -158,11 +173,14 @@ public class InternalClientUtil {
         for (int i = 0; i < jsonArray.size(); i++) {
             JsonObject jsonObject = jsonArray.get(i).getAsJsonObject();
 
-            names.add(UserNamePersistent.of(
-                    jsonObject.get("uuid").getAsString(),
-                    jsonObject.get("nickname").getAsString(),
-                    jsonObject.get("profileImageUrl").getAsString()
-            ));
+            names.put(
+                    jsonObject.get("id").getAsString(),
+                    UserNamePersistent.of(
+                            jsonObject.get("id").getAsString(),
+                            jsonObject.get("nickname").getAsString(),
+                            jsonObject.get("profileImageUrl").getAsString()
+                    )
+            );
         }
 
         return names;

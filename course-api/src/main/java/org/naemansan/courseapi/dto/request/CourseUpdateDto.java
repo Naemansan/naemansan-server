@@ -7,11 +7,11 @@ import org.naemansan.courseapi.dto.common.LocationDto;
 import java.util.List;
 
 public record CourseUpdateDto(
-        @JsonProperty("title")
+        @JsonProperty("name")
         @Size(min = 1, max = 12)
         String title,
 
-        @JsonProperty("content")
+        @JsonProperty("description")
         @Size(min = 1, max = 300)
         String content,
 

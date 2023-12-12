@@ -15,17 +15,17 @@ import java.util.List;
 public class UserInternalAdapter {
     private final UserUseCase userUseCase;
 
-    @GetMapping("/name")
-    public ResponseDto<?> readUserNames(
-            @RequestParam("userIds")List<String> userIds
-    ) {
-        return ResponseDto.ok(userUseCase.findUserNamesByUuids(userIds));
-    }
-
     @GetMapping("/{userId}/name")
     public ResponseDto<?> readUserNames(
             @PathVariable("userId") String userId
     ) {
-        return ResponseDto.ok(userUseCase.findUserNameByUuid(userId));
+        return ResponseDto.ok(userUseCase.findUserNameById(userId));
+    }
+
+    @GetMapping("/name")
+    public ResponseDto<?> readUserNames(
+            @RequestParam("userIds") List<String> userIds
+    ) {
+        return ResponseDto.ok(userUseCase.findUserNamesByIds(userIds));
     }
 }

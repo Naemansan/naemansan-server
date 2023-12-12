@@ -8,12 +8,10 @@ import org.naemansan.common.dto.type.ErrorCode;
 import org.naemansan.common.exception.CommonException;
 import org.naemansan.courseapi.application.port.in.command.CreateCourseCommand;
 import org.naemansan.courseapi.application.port.in.command.DeleteCourseCommand;
-import org.naemansan.courseapi.application.port.in.command.UpdateCourseCommand;
 import org.naemansan.courseapi.application.port.in.command.UpdateCourseStatusCommand;
 import org.naemansan.courseapi.application.port.in.query.ReadCourseCommand;
 import org.naemansan.courseapi.application.port.in.query.ReadCourseDependenceCommand;
 import org.naemansan.courseapi.application.port.in.query.ReadCoursesCommand;
-import org.naemansan.courseapi.application.port.in.query.ReadMomentsCommand;
 import org.naemansan.courseapi.application.port.in.usecase.CourseUseCase;
 import org.naemansan.courseapi.application.port.in.usecase.MomentUseCase;
 import org.naemansan.courseapi.application.port.in.usecase.SpotUseCase;
@@ -82,12 +80,12 @@ public class CourseExternalAdapter {
             @PathVariable("courseId") Long courseId,
             @RequestBody @Valid CourseUpdateDto requestDto
     ) {
-//        String uuid = "625ad265-cc31-44fd-b783-e8cd047b6903";
+//        String id = "625ad265-cc31-44fd-b783-e8cd047b6903";
 //        courseUseCase.updateCourse(UpdateCourseCommand.of(
-//                uuid,
+//                id,
 //                courseId,
-//                requestDto.title(),
-//                requestDto.content(),
+//                requestDto.name(),
+//                requestDto.description(),
 //                requestDto.tagIds(),
 //                requestDto.spots()));
 

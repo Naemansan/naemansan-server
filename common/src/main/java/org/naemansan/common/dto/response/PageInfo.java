@@ -6,10 +6,10 @@ import org.springframework.data.domain.Page;
 
 @Builder
 public record PageInfo(
-        @JsonProperty("current_page") Integer currentPage,
-        @JsonProperty("current_size") Integer size,
-        @JsonProperty("total_page") Integer totalPage,
-        @JsonProperty("total_element") Integer totalElement) {
+        @JsonProperty("currentPage") Integer currentPage,
+        @JsonProperty("currentSize") Integer size,
+        @JsonProperty("totalPage") Integer totalPage,
+        @JsonProperty("totalElement") Integer totalElement) {
 
     public static PageInfo fromPage(Page page) {
         return PageInfo.builder()

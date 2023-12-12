@@ -7,7 +7,6 @@ import org.naemansan.courseapi.application.port.out.SpotRepositoryPort;
 import org.naemansan.courseapi.domain.Course;
 import org.naemansan.courseapi.domain.Spot;
 import org.naemansan.courseapi.dto.persistent.SpotPersistent;
-import org.naemansan.courseapi.dto.request.SpotDto;
 
 import java.util.List;
 
@@ -19,8 +18,8 @@ public class SpotPersistentAdapter implements SpotRepositoryPort {
     @Override
     public void save(SpotPersistent spot, Course course) {
         spotRepository.save(Spot.builder()
-                .title(spot.title())
-                .content(spot.content())
+                .name(spot.name())
+                .description(spot.description())
                 .location(spot.location())
                 .thumbnail(spot.thumbnail())
                 .category(spot.category())
@@ -31,8 +30,8 @@ public class SpotPersistentAdapter implements SpotRepositoryPort {
     public void saveAll(List<SpotPersistent> spots, Course course) {
         spotRepository.saveAll(spots.stream()
                 .map(spotDto -> Spot.builder()
-                        .title(spotDto.title())
-                        .content(spotDto.content())
+                        .name(spotDto.name())
+                        .description(spotDto.description())
                         .location(spotDto.location())
                         .thumbnail(spotDto.thumbnail())
                         .category(spotDto.category())

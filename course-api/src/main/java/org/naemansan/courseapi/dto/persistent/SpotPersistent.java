@@ -5,9 +5,9 @@ import org.naemansan.courseapi.dto.request.SpotDto;
 import org.naemansan.courseapi.dto.type.ECategory;
 
 public record SpotPersistent(
-        String title,
+        String name,
 
-        String content,
+        String description,
 
         Point location,
 
@@ -18,8 +18,8 @@ public record SpotPersistent(
 ) {
     public static SpotPersistent fromDto(SpotDto dto, String thumbnail, Point location) {
         return new SpotPersistent(
-                dto.title(),
-                dto.content(),
+                dto.name(),
+                dto.description(),
                 location,
                 thumbnail,
                 dto.category()

@@ -1,5 +1,4 @@
-package org.naemansan.userapi.application.port.out;
-
+package org.naemansan.courseapi.application.port.out;
 
 import java.util.Map;
 

@@ -4,6 +4,7 @@ import org.locationtech.jts.geom.MultiPoint;
 import org.locationtech.jts.geom.Point;
 import org.naemansan.courseapi.adapter.out.repository.CourseRepository;
 import org.naemansan.courseapi.domain.Course;
+import org.naemansan.courseapi.dto.type.EState;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -36,5 +37,5 @@ public interface CourseRepositoryPort {
 
     void deleteCourse(Course course);
 
-    List<Course> findNearCoursesByUserIdAndLocationAndIsEnrolled(UUID userId, Point location, Boolean isEnrolled);
+    List<Course> findNearCoursesByUserIdAndLocationAndState(UUID userId, Point location, EState state);
 }

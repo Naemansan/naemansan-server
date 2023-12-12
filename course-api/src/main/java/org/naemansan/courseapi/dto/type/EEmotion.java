@@ -24,11 +24,4 @@ public enum EEmotion {
     public String toString() {
         return value;
     }
-
-    public static EEmotion fromString(String value) {
-        return Arrays.stream(EEmotion.values())
-                .filter(emotion -> emotion.value.equals(value))
-                .findFirst()
-                .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_RESOURCE));
-    }
 }

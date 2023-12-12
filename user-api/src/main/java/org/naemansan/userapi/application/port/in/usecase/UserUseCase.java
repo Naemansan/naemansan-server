@@ -7,13 +7,14 @@ import org.naemansan.userapi.dto.response.UserDetailDto;
 import org.naemansan.userapi.dto.response.UserNameDto;
 
 import java.util.List;
+import java.util.Map;
 
 public interface UserUseCase {
-    UserDetailDto findUserDetailByUuid(ReadUserQuery command);
+    UserDetailDto findUserDetailById(ReadUserQuery command);
 
-    void updateUserByUuid(UpdateUserCommand command);
+    Map<String, Object> updateUserById(UpdateUserCommand command);
 
-    UserNameDto findUserNameByUuid(String uuid);
+    UserNameDto findUserNameById(String uuid);
 
-    List<UserNameDto> findUserNamesByUuids(List<String> uuids);
+    List<UserNameDto> findUserNamesByIds(List<String> uuids);
 }

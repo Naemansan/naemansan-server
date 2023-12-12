@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface CourseUseCase {
-    CourseDetailDto createCourse(CreateCourseCommand command);
+    Map<String, Object> createCourse(CreateCourseCommand command);
 
     CourseDetailDto findCourseById(ReadCourseCommand command);
 

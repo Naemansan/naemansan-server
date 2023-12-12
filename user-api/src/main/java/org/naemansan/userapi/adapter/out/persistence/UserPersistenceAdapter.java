@@ -17,26 +17,21 @@ public class UserPersistenceAdapter implements UserRepositoryPort {
     private final UserRepository userRepository;
 
     @Override
-    public User findUserByUuid(String uuid) {
-        return userRepository.findByUuid(UUID.fromString(uuid))
+    public User findUserById(String userId) {
+        return userRepository.findById(UUID.fromString(userId))
                 .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_RESOURCE));
     }
 
     @Override
-    public User findUserDetailByUuid(String uuid) {
-        return userRepository.findUserDetailByUuid(UUID.fromString(uuid))
+    public UserRepository.UserName findUserNameById(String userId) {
+        return userRepository.findUserNameById(UUID.fromString(userId))
                 .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_RESOURCE));
     }
 
     @Override
-    public UserRepository.UserName findUserNameByUuid(String uuid) {
-        return userRepository.findUserNameByUuid(UUID.fromString(uuid))
-                .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_RESOURCE));
-    }
-
-    @Override
-    public List<UserRepository.UserName> findUserNamesByUuids(List<String> uuids) {
-        return userRepository.findUserNamesByUuids(uuids.stream()
-                .map(UUID::fromString).toList());
+    public List<UserRepository.UserName> findUserNamesByIds(List<String> userIds) {
+        return userRepository.findUserNamesByIds(userIds.stream()
+                .map(UUID::fromString)
+                .toList());
     }
 }

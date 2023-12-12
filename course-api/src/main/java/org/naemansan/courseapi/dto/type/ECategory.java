@@ -25,11 +25,4 @@ public enum ECategory {
     public String toString() {
         return value;
     }
-
-    public static ECategory fromString(String value) {
-        return Arrays.stream(ECategory.values())
-                .filter(emotion -> emotion.value.equals(value))
-                .findFirst()
-                .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_RESOURCE));
-    }
 }

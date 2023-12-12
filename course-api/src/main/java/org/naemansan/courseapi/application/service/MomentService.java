@@ -79,7 +79,7 @@ public class MomentService implements MomentUseCase {
         Page<Moment> moments = momentRepositoryPort.findMoments(pageable);
 
         // 유저 이름 조회
-        List<UserNamePersistent> userNames = userServicePort.findUserNames(
+        Map<String, UserNamePersistent> userNames = userServicePort.findUserNames(
                 moments.getContent().stream().map(moment -> moment.getUserId().toString()).toList()
         );
 
@@ -90,9 +90,7 @@ public class MomentService implements MomentUseCase {
                         .id(moment.getId())
                         .courseId(moment.getCourse().getId())
                         .courseTitle(moment.getCourse().getTitle())
-                        .nickname(userNames.stream()
-                                .filter(userName -> userName.uuid().equals(moment.getUserId().toString()))
-                                .findFirst().orElseThrow().nickname())
+                        .nickname(userNames.get(moment.getUserId().toString()).nickname())
                         .content(moment.getContent())
                         .createdAt(moment.getCreatedAt().toString())
                         .emotion(moment.getEmotion())
@@ -115,7 +113,7 @@ public class MomentService implements MomentUseCase {
         Page<Moment> moments = momentRepositoryPort.findMomentsByCourse(course, pageable);
 
         // 유저 이름 조회
-        List<UserNamePersistent> userNames = userServicePort.findUserNames(
+        Map<String, UserNamePersistent> userNames = userServicePort.findUserNames(
                 moments.getContent().stream().map(moment -> moment.getUserId().toString()).toList()
         );
 
@@ -126,9 +124,7 @@ public class MomentService implements MomentUseCase {
                         .id(moment.getId())
                         .courseId(moment.getCourse().getId())
                         .courseTitle(moment.getCourse().getTitle())
-                        .nickname(userNames.stream()
-                                .filter(userName -> userName.uuid().equals(moment.getUserId().toString()))
-                                .findFirst().orElseThrow().nickname())
+                        .nickname(userNames.get(moment.getUserId().toString()).nickname())
                         .content(moment.getContent())
                         .createdAt(moment.getCreatedAt().toString())
                         .emotion(moment.getEmotion())

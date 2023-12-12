@@ -5,6 +5,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import lombok.NoArgsConstructor;
 import org.naemansan.userapi.dto.response.TagDto;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -19,6 +20,13 @@ import java.util.List;
 @Component
 @NoArgsConstructor
 public class ClientUtil {
+    @Value("${internal-service.course-api}")
+    private String COURSE_API_URL;
+    @Value("${internal-service.tag-api}")
+    private String TAG_API_URL;
+    @Value("${internal-service.auth-api}")
+    private String AUTH_API_URL;
+
     private final RestTemplate restTemplate = new RestTemplate();
     private final Gson gson = new Gson();
     private final HttpHeaders headers = new HttpHeaders();
@@ -30,7 +38,7 @@ public class ClientUtil {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
 
-        String url = "http://tag-api:8080/tags";
+        String url = String.format("%s/tags", TAG_API_URL);
 
         if (tagIds != null) {
             StringBuilder sb = new StringBuilder();

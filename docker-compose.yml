@@ -64,7 +64,7 @@ services:
     networks:
       - naemansan_network
     ports:
-      - "8080:8080"
+      - "8081:8080"
     depends_on:
       - mysql-naemansan
       - user-api
@@ -73,19 +73,10 @@ services:
     networks:
       - naemansan_network
     ports:
-      - "8081:8080"
-    depends_on:
-      - mysql-naemansan
-      - tag-api
-
-  tag-api:
-    image: naemansan-tag-api:0.0.1-SNAPSHOT
-    networks:
-      - naemansan_network
-    ports:
       - "8082:8080"
     depends_on:
       - mysql-naemansan
+      - tag-api
 
   course-api:
     image: naemansan-course-api:0.0.1-SNAPSHOT
@@ -96,6 +87,15 @@ services:
     depends_on:
       - mysql-naemansan
       - tag-api
+
+  tag-api:
+    image: naemansan-tag-api:0.0.1-SNAPSHOT
+    networks:
+      - naemansan_network
+    ports:
+      - "8084:8080"
+    depends_on:
+      - mysql-naemansan
 
 #  axon-server:
 #    container_name: axon-server
