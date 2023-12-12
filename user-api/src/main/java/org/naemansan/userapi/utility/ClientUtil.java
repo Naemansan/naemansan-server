@@ -28,7 +28,7 @@ public class ClientUtil {
         headers.add("Content-Type", "application/json");
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        HttpEntity<MultiValueMap<String,String>> request = new HttpEntity<>(params, headers);
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
 
         String url = "http://tag-api:8080/tags";
 
