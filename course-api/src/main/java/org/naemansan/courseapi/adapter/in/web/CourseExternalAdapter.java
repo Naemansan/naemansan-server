@@ -38,7 +38,7 @@ public class CourseExternalAdapter {
     ) {
         String uuid = "625ad265-cc31-44fd-b783-e8cd047b6903";
 
-        return ResponseDto.ok(courseUseCase.createCourse(CreateCourseCommand.of(
+        return ResponseDto.created(courseUseCase.createCourse(CreateCourseCommand.of(
                 uuid,
                 requestDto.title(),
                 requestDto.content(),

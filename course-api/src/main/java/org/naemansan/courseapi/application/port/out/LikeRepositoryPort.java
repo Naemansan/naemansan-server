@@ -15,9 +15,9 @@ public interface LikeRepositoryPort {
 
     void deleteLike(Like like);
 
-    Boolean existsByCourseAndUserId(Course course, UUID userId);
+    Boolean existsByUserIdAndCourse(UUID userId, Course course);
 
-    Map<Long, Boolean> existsByCoursesAndUserId(List<Course> course, UUID userId);
+    Map<Long, Boolean> existsByUserIdAndCourses(UUID userId, List<Course> courses);
 
     Long countByCourse(Course course);
 
