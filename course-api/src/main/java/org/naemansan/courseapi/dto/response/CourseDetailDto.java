@@ -13,10 +13,10 @@ public record CourseDetailDto(
         @JsonProperty("id")
         Long id,
 
-        @JsonProperty("name")
+        @JsonProperty("title")
         String title,
 
-        @JsonProperty("description")
+        @JsonProperty("content")
         String content,
         @JsonProperty("startLocationName")
         String startLocationName,
@@ -33,6 +33,9 @@ public record CourseDetailDto(
         @JsonProperty("createdAt")
         String createdAt,
 
+        @JsonProperty("likeCount")
+        Long likeCount,
+
         @JsonProperty("userId")
         String userId,
 
@@ -40,9 +43,6 @@ public record CourseDetailDto(
         String userNickName,
 
         @JsonProperty("userProfileImageUrl")
-        String userProfileImageUrl,
-
-        @JsonProperty("likeCount")
-        Long likeCount
+        String userProfileImageUrl
 ) {
 }

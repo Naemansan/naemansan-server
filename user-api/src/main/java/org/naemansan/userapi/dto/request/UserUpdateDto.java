@@ -17,11 +17,9 @@ public record UserUpdateDto(
         String introduction,
 
         @JsonProperty("createdTagIds")
-        @NotNull
         List<Long> createdTagIds,
 
         @JsonProperty("deletedTagIds")
-        @NotNull
         List<Long> deletedTagIds,
 
         @JsonProperty("imageState")

@@ -11,7 +11,7 @@ public record CourseSimilarityDto(
         @JsonProperty("id")
         Long id,
 
-        @JsonProperty("name")
+        @JsonProperty("title")
         String title,
 
         @JsonProperty("startLocationName")

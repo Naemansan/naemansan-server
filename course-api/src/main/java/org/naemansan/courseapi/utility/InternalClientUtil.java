@@ -35,7 +35,7 @@ public class InternalClientUtil {
     private final Gson gson = new Gson();
     private final HttpHeaders headers = new HttpHeaders();
 
-    public List<TagDto> getTagNames(List<Long> tagIds) {
+    public Map<Long, String> getTagNames(List<Long> tagIds) {
         // 요청 URL 설정
         String url = String.format("%s/tags", TAG_API_URL);
         if (tagIds != null) {
@@ -74,20 +74,20 @@ public class InternalClientUtil {
         }
 
         // 후처리 후 반환
-        List<TagDto> tags = new ArrayList<>();
+        Map<Long, String> tagNames = new HashMap<>();
         JsonArray jsonArray = gson.fromJson(response.getBody(), JsonObject.class)
                 .getAsJsonArray("data");
 
         for (int i = 0; i < jsonArray.size(); i++) {
             JsonObject jsonObject = jsonArray.get(i).getAsJsonObject();
 
-            tags.add(TagDto.builder()
-                    .id(jsonObject.get("id").getAsLong())
-                    .name(jsonObject.get("name").getAsString())
-                    .build());
+            tagNames.put(
+                    jsonObject.get("id").getAsLong(),
+                    jsonObject.get("name").getAsString()
+            );
         }
 
-        return tags;
+        return tagNames;
     }
 
     public UserNamePersistent getUserName(String uuid) {

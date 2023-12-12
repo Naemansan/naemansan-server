@@ -61,29 +61,25 @@ services:
       - MYSQL_DATABASE=naemansan
 
   user-api:
-    image: hyungjoonson/naemansan-user-api:0.0.1
+    image: hyungjoonson/naemansan-user-api:0.1.0
     networks:
       - naemansan_network
     ports:
       - "8082:8080"
     depends_on:
       - mysql-naemansan
-      - course-api
-      - tag-api
 
   course-api:
-    image: hyungjoonson/naemansan-course-api:0.0.1
+    image: hyungjoonson/naemansan-course-api:0.1.0
     networks:
       - naemansan_network
     ports:
       - "8083:8080"
     depends_on:
       - mysql-naemansan
-      - user-api
-      - tag-api
 
   tag-api:
-    image: hyungjoonson/naemansan-tag-api:0.0.1
+    image: hyungjoonson/naemansan-tag-api:0.1.0
     networks:
       - naemansan_network
     ports:

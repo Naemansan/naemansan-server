@@ -12,7 +12,7 @@ public record CourseListDto(
         @JsonProperty("id")
         Long id,
 
-        @JsonProperty("name")
+        @JsonProperty("title")
         String title,
 
         @JsonProperty("startLocationName")

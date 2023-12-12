@@ -15,7 +15,7 @@ public class TagExternalAdapter implements TagServicePort {
     private final InternalClientUtil internalClientUtil;
 
     @Override
-    public List<TagDto> findByTagIds(List<Long> tagIds) {
+    public Map<Long, String> findByTagIds(List<Long> tagIds) {
         return internalClientUtil.getTagNames(tagIds);
     }
 }

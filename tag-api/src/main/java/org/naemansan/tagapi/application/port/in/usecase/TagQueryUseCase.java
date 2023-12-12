@@ -1,6 +1,6 @@
 package org.naemansan.tagapi.application.port.in.usecase;
 
-import org.naemansan.tagapi.dto.request.TagDto;
+import org.naemansan.tagapi.dto.response.TagDto;
 
 import java.util.List;
 

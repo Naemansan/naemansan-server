@@ -42,7 +42,7 @@ docker {
     files tasks.bootJar.outputs.files
     buildArgs(['JAR_FILE': tasks.bootJar.outputs.files.singleFile.name])
 
-//    platform("linux/amd64", "linux/arm64")
+//    platform("linux/amd64")
 //    buildx(true)
 //    noCache(true)
 //    push(true)

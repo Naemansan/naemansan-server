@@ -5,7 +5,7 @@ import org.naemansan.common.annotaion.PersistenceAdapter;
 import org.naemansan.tagapi.adapter.out.repository.TagRepository;
 import org.naemansan.tagapi.application.port.out.FindTagPort;
 import org.naemansan.tagapi.domain.Tag;
-import org.naemansan.tagapi.dto.request.TagDto;
+import org.naemansan.tagapi.dto.response.TagDto;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -7,11 +7,11 @@ import org.naemansan.courseapi.dto.common.LocationDto;
 import java.util.List;
 
 public record CourseUpdateDto(
-        @JsonProperty("name")
+        @JsonProperty("title")
         @Size(min = 1, max = 12)
         String title,
 
-        @JsonProperty("description")
+        @JsonProperty("content")
         @Size(min = 1, max = 300)
         String content,
 
@@ -21,10 +21,10 @@ public record CourseUpdateDto(
         @JsonProperty("deleteTagIds")
         List<Long> deleteTagIds,
 
-        @JsonProperty("deleteSpotIds")
-        List<Long> deleteSpotIds,
-
         @JsonProperty("createSpots")
-        List<SpotDto> createSpots
+        List<SpotDto> createSpots,
+
+        @JsonProperty("deleteSpotIds")
+        List<Long> deleteSpotIds
 ) {
 }

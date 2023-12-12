@@ -1,6 +1,7 @@
 package org.naemansan.courseapi.dto.common;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
 @Builder

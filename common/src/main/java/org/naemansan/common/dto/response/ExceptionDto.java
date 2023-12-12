@@ -9,7 +9,8 @@ public class ExceptionDto {
     @NotNull
     private final Integer code;
 
-    @NotNull private final String message;
+    @NotNull
+    private final String message;
 
     public ExceptionDto(ErrorCode errorCode) {
         this.code = errorCode.getCode();
