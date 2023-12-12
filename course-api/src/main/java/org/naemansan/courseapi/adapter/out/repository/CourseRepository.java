@@ -27,8 +27,8 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
     @EntityGraph(attributePaths = {"tags"})
     List<Course> findByIdIn(List<Long> ids);
 
-    @Query("select distinct c from Course c join fetch c.tags t where c.state = 'ENROLLED'")
-    Page<Course> findAll(Pageable pageable);
+    @EntityGraph(attributePaths = {"tags"})
+    Page<Course> findAllByState(EState state, Pageable pageable);
 
     @Query(value = "SELECT c.id AS id, c.created_at AS createdAt FROM courses c join course_tags ct on c.id = ct.course_id "
             + "WHERE ct.tag_id in :tagIds AND c.state = 'ENROLLED'",

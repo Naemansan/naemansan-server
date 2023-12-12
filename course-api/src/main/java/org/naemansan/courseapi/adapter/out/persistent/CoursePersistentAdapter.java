@@ -39,7 +39,7 @@ public class CoursePersistentAdapter implements CourseRepositoryPort {
 
     @Override
     public Page<Course> findCourses(Pageable pageable) {
-        return courseRepository.findAll(pageable);
+        return courseRepository.findAllByState(EState.ENROLLED, pageable);
     }
 
     @Override

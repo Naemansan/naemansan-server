@@ -40,8 +40,13 @@ tasks.named('test') {
 
 docker {
     println(tasks.bootJar.outputs.files)
-    name rootProject.name+'-'+project.name + ":" + version
+    name "hyungjoonson"+"/"+rootProject.name+'-'+project.name + ":" + version
     dockerfile file('../Dockerfile')
     files tasks.bootJar.outputs.files
     buildArgs(['JAR_FILE': tasks.bootJar.outputs.files.singleFile.name])
+
+//    platform("linux/amd64", "linux/arm64")
+//    buildx(true)
+//    noCache(true)
+//    push(true)
 }

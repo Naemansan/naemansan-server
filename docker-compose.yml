@@ -60,37 +60,30 @@ services:
       - MYSQL_ROOT_PASSWORD=1234
       - MYSQL_DATABASE=naemansan
 
-  auth-api:
-    image: naemansan-auth-api:0.0.1-SNAPSHOT
-    networks:
-      - naemansan_network
-    ports:
-      - "8081:8080"
-    depends_on:
-      - mysql-naemansan
-      - user-api
   user-api:
-    image: naemansan-user-api:0.0.1-SNAPSHOT
+    image: hyungjoonson/naemansan-user-api:0.0.1
     networks:
       - naemansan_network
     ports:
       - "8082:8080"
     depends_on:
       - mysql-naemansan
+      - course-api
       - tag-api
 
   course-api:
-    image: naemansan-course-api:0.0.1-SNAPSHOT
+    image: hyungjoonson/naemansan-course-api:0.0.1
     networks:
       - naemansan_network
     ports:
       - "8083:8080"
     depends_on:
       - mysql-naemansan
+      - user-api
       - tag-api
 
   tag-api:
-    image: naemansan-tag-api:0.0.1-SNAPSHOT
+    image: hyungjoonson/naemansan-tag-api:0.0.1
     networks:
       - naemansan_network
     ports:

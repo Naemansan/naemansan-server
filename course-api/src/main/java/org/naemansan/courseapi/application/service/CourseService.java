@@ -158,7 +158,7 @@ public class CourseService implements CourseUseCase {
                                     .startLocationName(course.getStartLocationName())
                                     .distance(String.valueOf(Math.round(course.getDistance())))
                                     .locations(CourseUtil.multiPoint2Locations(course.getLocations()))
-                                    .tags(tagServicePort.findByTagIds(
+                                    .tags(course.getTags().isEmpty() ? List.of() : tagServicePort.findByTagIds(
                                             course.getTags().stream().map(CourseTag::getTagId).toList()))
                                     .momentCount(momentCounts.getOrDefault(course.getId(), 0L))
                                     .likeCount(likeCounts.getOrDefault(course.getId(), 0L))
@@ -187,7 +187,7 @@ public class CourseService implements CourseUseCase {
                                     .startLocationName(courses.get(dataForm.getId()).getStartLocationName())
                                     .distance(String.valueOf(Math.round(courses.get(dataForm.getId()).getDistance())))
                                     .locations(CourseUtil.multiPoint2Locations(courses.get(dataForm.getId()).getLocations()))
-                                    .tags(tagServicePort.findByTagIds(
+                                    .tags(courses.get(dataForm.getId()).getTags().isEmpty() ? List.of() : tagServicePort.findByTagIds(
                                             courses.get(dataForm.getId()).getTags().stream().map(CourseTag::getTagId).toList()))
                                     .momentCount(momentCounts.getOrDefault(dataForm.getId(), 0L))
                                     .likeCount(likeCounts.getOrDefault(dataForm.getId(), 0L))
@@ -233,7 +233,7 @@ public class CourseService implements CourseUseCase {
                                 .startLocationName(courses.get(radiusForm.getId()).getStartLocationName())
                                 .distance(String.valueOf(Math.round(courses.get(radiusForm.getId()).getDistance())))
                                 .locations(CourseUtil.multiPoint2Locations(courses.get(radiusForm.getId()).getLocations()))
-                                .tags(tagServicePort.findByTagIds(
+                                .tags(courses.get(radiusForm.getId()).getTags().isEmpty() ? List.of() : tagServicePort.findByTagIds(
                                         courses.get(radiusForm.getId()).getTags().stream().map(CourseTag::getTagId).toList()))
                                 .momentCount(momentCounts.getOrDefault(radiusForm.getId(), 0L))
                                 .likeCount(likeCounts.getOrDefault(radiusForm.getId(), 0L))
