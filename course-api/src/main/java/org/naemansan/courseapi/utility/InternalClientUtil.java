@@ -8,6 +8,7 @@ import org.naemansan.common.dto.type.ErrorCode;
 import org.naemansan.common.exception.CommonException;
 import org.naemansan.courseapi.dto.common.TagDto;
 import org.naemansan.courseapi.dto.persistent.UserNamePersistent;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -23,21 +24,20 @@ import java.util.*;
 @Component
 @NoArgsConstructor
 public class InternalClientUtil {
+    @Value("${internal-service.auth-api}")
+    private String AUTH_API_URL;
+    @Value("${internal-service.user-api}")
+    private String COURSE_API_URL;
+    @Value("${internal-service.tag-api}")
+    private String TAG_API_URL;
+
     private final RestTemplate restTemplate = new RestTemplate();
     private final Gson gson = new Gson();
     private final HttpHeaders headers = new HttpHeaders();
 
     public List<TagDto> getTagNames(List<Long> tagIds) {
-        // Header 설정
-        headers.clear();
-        headers.add("Content-Type", "application/json");
-
-        // Body 설정
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        HttpEntity<MultiValueMap<String,String>> request = new HttpEntity<>(params, headers);
-
-        String url = "http://tag-api:8080/tags";
-
+        // 요청 URL 설정
+        String url = String.format("%s/tags", TAG_API_URL);
         if (tagIds != null) {
             StringBuilder sb = new StringBuilder();
             sb.append(url).append("?ids=");
@@ -53,6 +53,15 @@ public class InternalClientUtil {
             url = sb.toString();
         }
 
+        // Header 설정
+        headers.clear();
+        headers.add("Content-Type", "application/json; charset=utf-8");
+
+        // Body 설정
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        HttpEntity<MultiValueMap<String,String>> request = new HttpEntity<>(params, headers);
+
+        // 요청
         ResponseEntity<String> response = null;
         try {
             response = restTemplate.exchange(
@@ -82,15 +91,16 @@ public class InternalClientUtil {
     }
 
     public UserNamePersistent getUserName(String uuid) {
+        // 요청 URL 설정
+        String url = String.format("%s/internal-users/%s/name", COURSE_API_URL, uuid);
+
         // Header 설정
         headers.clear();
-        headers.add("Content-Type", "application/json");
+        headers.add("Content-Type", "application/json; charset=utf-8");
 
         // Body 설정
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         HttpEntity<MultiValueMap<String,String>> request = new HttpEntity<>(params, headers);
-
-        String url = "http://user-api:8080/internal-users/" + uuid + "/name";
 
         // 요청
         ResponseEntity<String> response = null;
@@ -116,15 +126,8 @@ public class InternalClientUtil {
     }
 
     public Map<String, UserNamePersistent> getUserNames(List<String> userIds) {
-        // Header 설정
-        headers.clear();
-        headers.add("Content-Type", "application/json");
-
-        // Body 설정
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        HttpEntity<MultiValueMap<String,String>> request = new HttpEntity<>(params, headers);
-
-        String url = "http://user-api:8080/internal-users/name";
+        // 요청 URL 설정
+        String url = String.format("%s/internal-users/name", COURSE_API_URL);
 
         if (userIds != null) {
             StringBuilder sb = new StringBuilder();
@@ -140,6 +143,14 @@ public class InternalClientUtil {
 
             url = sb.toString();
         }
+
+        // Header 설정
+        headers.clear();
+        headers.add("Content-Type", "application/json; charset=utf-8");
+
+        // Body 설정
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        HttpEntity<MultiValueMap<String,String>> request = new HttpEntity<>(params, headers);
 
         // 요청
         ResponseEntity<String> response = null;
