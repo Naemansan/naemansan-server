@@ -6,6 +6,7 @@ import org.naemansan.courseapi.application.port.in.command.UpdateCourseCommand;
 import org.naemansan.courseapi.application.port.in.command.UpdateCourseStatusCommand;
 import org.naemansan.courseapi.application.port.in.query.ReadCourseCommand;
 import org.naemansan.courseapi.application.port.in.query.ReadCoursesCommand;
+import org.naemansan.courseapi.application.port.in.query.ReadCoursesForUserCommand;
 import org.naemansan.courseapi.dto.response.CourseDetailDto;
 import org.naemansan.courseapi.dto.response.CourseListDto;
 
@@ -26,4 +27,6 @@ public interface CourseUseCase {
     void updateCourseStatus(UpdateCourseStatusCommand command);
 
     void deleteCourse(DeleteCourseCommand command);
+
+    Map<String, Object> findCoursesByUserId(ReadCoursesForUserCommand command);
 }

@@ -108,4 +108,17 @@ public class UserExternalController {
                 .size(size)
                 .build()));
     }
+
+    @GetMapping("/courses")
+    public ResponseDto<?> getCourseList(
+            @RequestParam(value = "filter") String filter,
+            @RequestParam(value = "page") Integer page,
+            @RequestParam(value = "size") Integer size) {
+        if (page < 0 || size < 0) {
+            throw new CommonException(ErrorCode.INVALID_PARAMETER);
+        }
+        String userId = "625ad265-cc31-44fd-b783-e8cd047b6903";
+
+        return ResponseDto.ok(userUseCase.getCourseList(filter, page, size));
+    }
 }

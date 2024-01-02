@@ -24,7 +24,7 @@ import java.util.Map;
 public class UserService implements UserUseCase {
     private final TagServicePort tagServicePort;
     private final ImageServicePort imageServicePort;
-
+    private final CourseServicePort courseServicePort;
     private final UserRepositoryPort userRepositoryPort;
     private final FollowRepositoryPort followRepositoryPort;
     private final UserTagRepositoryPort userTagRepositoryPort;
@@ -106,5 +106,10 @@ public class UserService implements UserUseCase {
                         .profileImageUrl(userName.getProfileImageUrl())
                         .build())
                 .toList();
+    }
+
+    @Override
+    public Map<String, Object> getCourseList(String filter, Integer page, Integer size) {
+        return courseServicePort.getCourseList(filter, page, size);
     }
 }

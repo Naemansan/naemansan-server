@@ -54,7 +54,6 @@ services:
       - /etc/localtime:/etc/localtime:ro
     ports:
       - "3306:3306"
-    platform: linux/amd64
     environment:
       - TZ=Asia/Seoul
       - MYSQL_ROOT_PASSWORD=1234

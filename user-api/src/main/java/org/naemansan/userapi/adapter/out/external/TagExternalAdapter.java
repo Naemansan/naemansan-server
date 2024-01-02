@@ -7,6 +7,7 @@ import org.naemansan.userapi.utility.ClientUtil;
 import org.naemansan.common.annotaion.WebAdapter;
 
 import java.util.List;
+import java.util.Map;
 
 @WebAdapter
 @RequiredArgsConstructor
@@ -17,4 +18,5 @@ public class TagExternalAdapter implements TagServicePort {
     public List<TagDto> findByTagDtoIds(List<Long> tagIds) {
         return clientUtil.getTagDtos(tagIds);
     }
+
 }

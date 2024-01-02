@@ -38,4 +38,8 @@ public interface CourseRepositoryPort {
     void deleteCourse(Course course);
 
     List<Course> findNearCoursesByUserIdAndLocationAndState(UUID userId, Point location, EState state);
+
+    Page<Long> findCoursesByUserIdAndIsDeleted(UUID userId, Pageable pageable);
+
+    Page<Long> findCoursesByUserIdAndIsEnrolledAndIsDeleted(UUID userId, Boolean isEnrolled, Pageable pageable);
 }
